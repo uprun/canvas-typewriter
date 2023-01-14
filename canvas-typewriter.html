@@ -121,11 +121,12 @@
     just_notes.select_draggable_element = function()
     {
         just_notes.debug_logging && console.log(event);
-        just_notes.being_dragged_element = event.originalTarget.offsetParent;
+        var target = event.originalTarget || event.target;
+        just_notes.being_dragged_element = target.offsetParent;
         just_notes.drag_offset = 
         {
-            x: event.originalTarget.offsetParent.offsetLeft - event.pageX,
-            y: event.originalTarget.offsetParent.offsetTop - event.pageY
+            x: target.offsetParent.offsetLeft - event.pageX,
+            y: target.offsetParent.offsetTop - event.pageY
 
         }
         event.preventDefault();
@@ -161,11 +162,17 @@
     just_notes.deselect_draggable_element = function()
     {
         just_notes.debug_logging && console.log(event);
-        if( event.explicitOriginalTarget.id == "body")
+        var target = event.explicitOriginalTarget || event.target;
+        if(event.toElement && event.toElement.id != "preview-ukrainian")
         {
-            just_notes.being_dragged_element = {};
-            
+            if( target.id == "body")
+            {
+                just_notes.being_dragged_element = {};
+                just_notes.debug_logging && console.log(event);
+                
+            }
         }
+        
         
         lisperanto.body_is_dragged = false;
 
@@ -252,17 +259,18 @@
 <script>
     just_notes.preview_on_transition_end = function()
     {
-        if(event.originalTarget.style["border-right-color"] == just_notes.background_color)
+        var target = event.originalTarget || event.target;
+        if(target.style["border-right-color"] == just_notes.background_color)
         {
-            event.originalTarget.style["border-right-color"] = just_notes.cursor_color;
+            target.style["border-right-color"] = just_notes.cursor_color;
             return;
         }
-        if(event.originalTarget.style["border-right-color"] == just_notes.cursor_color)
+        if(target.style["border-right-color"] == just_notes.cursor_color)
         {
-            event.originalTarget.style["border-right-color"] = just_notes.background_color;
+            target.style["border-right-color"] = just_notes.background_color;
             return;
         }
-        event.originalTarget.style["border-right-color"] = just_notes.background_color;
+        target.style["border-right-color"] = just_notes.background_color;
     };
 </script>
 

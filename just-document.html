@@ -96,6 +96,19 @@
         console.log("entering full screen");
     };
 </script>
+<script>
+    just_document.on_key_up = function()
+    {
+        console.log(event);
+
+    };
+</script>
+<script>
+    just_document.on_paste = function()
+    {
+        console.log(event);
+    }
+</script>
 
 
 <body 
@@ -106,7 +119,7 @@
         height: 100%;
         overflow: hidden;" 
     class=""
-    onkeydown="just_notes.on_key_down()"
+    
     onload="just_notes.on_load()"
     >
 
@@ -132,6 +145,11 @@
             margin: auto;
             white-space: pre-wrap;
             padding-top: 1rem;"
+        onpaste="just_document.on_paste()"
+        onkeydown="just_notes.on_key_down()"
+        onkeyup="just_document.on_key_up()"
+        onchange="just_document.on_paste()"
+        oninput="just_document.on_paste()"
         contenteditable="true">Hello text and here goes some text, maybe more, maybe less maybe more, maybe less maybe more, maybe less maybe more, maybe less less maybe more, maybe less less maybe more, maybe less 111
 and a new-line</div>
 

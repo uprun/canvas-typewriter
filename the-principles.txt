@@ -1,0 +1,1 @@
+1) functions should be small (40 lines top) and 100 chars per line max, ideally

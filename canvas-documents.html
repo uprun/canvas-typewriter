@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>canvas-typewriter</title>
+</head>
+<style>
+    .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+</style>
+<style>
+    .cursor-drag {
+        cursor: grab;
+    }
+</style>
+<style>
+    html, 
+    body {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+<script>
+    just_notes = {};
+    just_notes.debug_logging = false;
+    just_notes.background_color = "black";
+    just_notes.cursor_color = "rosybrown";
+</script>
+<script>
+    just_notes.recalculate_position_of_preview = function()
+    {
+        const actual_preview = document.getElementById("preview");
+        const children = Array.from(actual_preview.children);
+        var preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+        actual_preview.style.left = (document.body.offsetWidth / 2 - preview_ukrainian.offsetWidth) + "px";
+    };
+</script>
+<script>
+    just_notes.shift_canvas_by_delta = function(deltaX, deltaY)
+    {
+        just_notes.debug_logging && console.log({deltaX: deltaX, deltaY: deltaY});
+        var a_lot_of_nodes = document.getElementsByClassName("just-note");
+        for(var individual of a_lot_of_nodes)
+        {
+            individual.style.top = (individual.offsetTop - deltaY) + "px";
+            individual.style.left = (individual.offsetLeft - deltaX) + "px";
+
+        }
+    };
+</script>
+<script>
+    
+    just_notes.on_key_down = function()
+    {
+        const actual_preview = document.getElementById("preview");
+        const children = Array.from(actual_preview.children);
+        var preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+
+        const height_of_container = actual_preview.offsetHeight;
+        const width_of_container = actual_preview.offsetWidth;
+        const width_of_preview = preview_ukrainian.clientWidth;
+        
+        just_notes.debug_logging && console.log(event);
+        if(event.key == "Enter")
+        {
+            // create a note
+            just_notes.debug_logging && console.log("create note");
+            const template_for_just_notes = document.getElementById("template-for-just-note");
+            
+            const copy = template_for_just_notes.cloneNode(true);// deep copy
+            const children = Array.from(copy.children);
+            var copy_preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+            copy.id = "";
+            document.body.append(copy);
+            copy.style.left = (actual_preview.offsetLeft) + "px";
+            copy.style.top = (actual_preview.offsetTop) + "px";
+            copy.style.bottom = "";
+            copy.style.visibility = "visible";
+            copy_preview_ukrainian.textContent = preview_ukrainian.textContent;
+            preview_ukrainian.textContent = "";
+            just_notes.recalculate_position_of_preview();
+            just_notes.shift_canvas_by_delta(
+                -(width_of_preview)
+                , height_of_container);
+
+        }
+        if (event.key == "Backspace")
+        {
+            preview_ukrainian.textContent = preview_ukrainian.textContent.substring(0,preview_ukrainian.textContent.length - 1);
+            just_notes.recalculate_position_of_preview();
+            just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
+        }
+
+        if (event.key.length > 1 )
+        {
+            return;
+        }
+        
+        preview_ukrainian.textContent = preview_ukrainian.textContent + event.key;
+        just_notes.recalculate_position_of_preview();
+        just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
+        
+        event.preventDefault();
+    };
+</script>
+<script>
+    just_notes.on_load = function()
+    {
+        var body = document.getElementById("body");
+        body.focus();
+        just_notes.rem_related_height = document.getElementById("preview").offsetHeight;
+        document.getElementById("preview").style["border-right-color"] = just_notes.background_color;
+    };
+</script>
+<script>
+    just_notes.being_dragged_element = {};
+    just_notes.select_draggable_element = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        var target = event.originalTarget || event.target;
+        just_notes.being_dragged_element = target.offsetParent;
+        just_notes.drag_offset = 
+        {
+            x: target.offsetParent.offsetLeft - event.pageX,
+            y: target.offsetParent.offsetTop - event.pageY
+
+        }
+        event.preventDefault();
+    };
+
+</script>
+<script>
+    just_notes.body_on_mouse_move = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        if ( "style" in just_notes.being_dragged_element)
+        {
+            just_notes.being_dragged_element.style.left = (event.pageX + just_notes.drag_offset.x) + "px";
+            just_notes.being_dragged_element.style.top = (event.pageY + just_notes.drag_offset.y) + "px";
+            just_notes.being_dragged_element.style.bottom = "";
+        }
+        else
+        {
+            // possible body drag
+            if(lisperanto.body_is_dragged)
+            {
+                const deltaX = event.movementX;
+                const deltaY = event.movementY;
+                just_notes.shift_canvas_by_delta(-deltaX, -deltaY);
+                lisperanto.total_movement_while_body_drag = lisperanto.total_movement_while_body_drag + Math.abs(deltaX) + Math.abs(deltaY);
+            }
+
+        }
+        
+    };
+</script>
+<script>
+    just_notes.deselect_draggable_element = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        var target = event.explicitOriginalTarget || event.target;
+        if(event.toElement && event.toElement.id != "preview-ukrainian")
+        {
+            if( target.id == "body")
+            {
+                just_notes.being_dragged_element = {};
+                just_notes.debug_logging && console.log(event);
+                
+            }
+        }
+        
+        
+        lisperanto.body_is_dragged = false;
+
+    };
+</script>
+<script>
+    just_notes.body_on_mouse_up = function()
+    {
+        just_notes.being_dragged_element = {};
+        lisperanto.body_is_dragged = false;
+
+    };
+</script>
+<script>
+    just_notes.just_prevent_default_handler = function()
+    {
+        event.preventDefault();
+        event.cancelBubble = true;
+    };
+</script>
+<script>
+    just_notes.body_on_wheel = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        just_notes.shift_canvas_by_delta(event.deltaX, event.deltaY);
+    };
+</script>
+
+<script>
+    lisperanto = {};
+    lisperanto.bodyOnTouchMove = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        var touches = event.changedTouches;
+        if(touches.length > 0 )
+        {
+            const clientX = touches[0].clientX;
+            const clientY = touches[0].clientY;
+            if(typeof(lisperanto.previosTouch) !== "undefined")
+            {
+                var deltaX = lisperanto.previosTouch.x - clientX;
+                var deltaY = lisperanto.previosTouch.y - clientY;
+                just_notes.shift_canvas_by_delta(deltaX, deltaY);
+            }
+            lisperanto.previosTouch = {x: clientX, y: clientY};
+        }
+    };
+</script>
+<script>
+    lisperanto.bodyOnTouchEnd = function()
+    {
+        lisperanto.previosTouch = undefined;
+    };
+</script>
+
+<script>
+    lisperanto.body_onmousedown = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        lisperanto.body_is_dragged = true;
+        lisperanto.total_movement_while_body_drag = 0;
+    };
+</script>
+
+<script>
+    lisperanto.bodyOnClick = function(e)
+    {
+        just_notes.debug_logging && console.log(event);
+        var offset = 
+        {
+            x: event.pageX,
+            y: event.pageY
+        };
+
+        const drag_threshold = 3 * just_notes.rem_related_height;
+        if ( lisperanto.total_movement_while_body_drag > drag_threshold )
+        {
+            // to prevent click handler after drag, but allow it if drag was small
+            lisperanto.total_movement_while_body_drag = 0;
+            return;
+        }
+    };
+</script>
+<script>
+    just_notes.preview_on_transition_end = function()
+    {
+        var target = event.originalTarget || event.target;
+        if(target.style["border-right-color"] == just_notes.background_color)
+        {
+            target.style["border-right-color"] = just_notes.cursor_color;
+            return;
+        }
+        if(target.style["border-right-color"] == just_notes.cursor_color)
+        {
+            target.style["border-right-color"] = just_notes.background_color;
+            return;
+        }
+        target.style["border-right-color"] = just_notes.background_color;
+    };
+</script>
+
+
+<body 
+    id="body"
+    style="background-color: black;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;" 
+    class="cursor-drag"
+    onkeydown="just_notes.on_key_down()" 
+    onload="just_notes.on_load()"
+    onmousemove="just_notes.body_on_mouse_move()"
+    onmouseup="just_notes.body_on_mouse_up()"
+    onmouseout="just_notes.deselect_draggable_element()"
+    onmouseleave="just_notes.deselect_draggable_element()"
+    onwheel="just_notes.body_on_wheel()"
+
+    ontouchmove="lisperanto.bodyOnTouchMove()"
+    ontouchend="lisperanto.bodyOnTouchEnd()"
+    ontouchcancel="lisperanto.bodyOnTouchEnd()"
+    ontouchleave="lisperanto.bodyOnTouchEnd()"
+    onmousedown="lisperanto.body_onmousedown()"
+    onclick="lisperanto.bodyOnClick()"
+
+    
+    >
+    <div
+        id="template-for-just-note" 
+        class="just-note"
+        style="position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            color: rosybrown;
+            visibility: hidden;
+            width: max-content;"
+        onmouseleave="just_notes.just_prevent_default_handler()"
+        onmouseout="just_notes.just_prevent_default_handler()">
+        <div 
+            id="preview-ukrainian"
+            class="prevent-select cursor-drag"
+            style="white-space: pre-wrap;"
+            onmousedown="just_notes.select_draggable_element()"
+            onmouseleave="just_notes.just_prevent_default_handler()"
+            onmouseout="just_notes.just_prevent_default_handler()">some   why</div>
+
+        
+    </div>
+
+    <div
+        id="preview"
+        style="position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            color: rosybrown;
+            border-right-width: 0.2rem;
+            border-right-style: solid;
+            border-right-color: rosybrown;
+            transition: border-right-color 0.4s ease-in-out;
+            transition-delay: 0.3s;
+            min-width: 0.2rem;
+            min-height: 1.2rem;"
+        ontransitionend="just_notes.preview_on_transition_end()">
+        <div 
+            id="preview-ukrainian"
+            style="white-space: pre-wrap;
+                width: fit-content;"></div>
+
+        
+    </div>
+
+</body>

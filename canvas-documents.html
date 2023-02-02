@@ -56,55 +56,7 @@
     
     just_notes.on_key_down = function()
     {
-        const actual_preview = document.getElementById("preview");
-        const children = Array.from(actual_preview.children);
-        var preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
-
-        const height_of_container = actual_preview.offsetHeight;
-        const width_of_container = actual_preview.offsetWidth;
-        const width_of_preview = preview_ukrainian.clientWidth;
         
-        just_notes.debug_logging && console.log(event);
-        if(event.key == "Enter")
-        {
-            // create a note
-            just_notes.debug_logging && console.log("create note");
-            const template_for_just_notes = document.getElementById("template-for-just-note");
-            
-            const copy = template_for_just_notes.cloneNode(true);// deep copy
-            const children = Array.from(copy.children);
-            var copy_preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
-            copy.id = "";
-            document.body.append(copy);
-            copy.style.left = (actual_preview.offsetLeft) + "px";
-            copy.style.top = (actual_preview.offsetTop) + "px";
-            copy.style.bottom = "";
-            copy.style.visibility = "visible";
-            copy_preview_ukrainian.textContent = preview_ukrainian.textContent;
-            preview_ukrainian.textContent = "";
-            just_notes.recalculate_position_of_preview();
-            just_notes.shift_canvas_by_delta(
-                -(width_of_preview)
-                , height_of_container);
-
-        }
-        if (event.key == "Backspace")
-        {
-            preview_ukrainian.textContent = preview_ukrainian.textContent.substring(0,preview_ukrainian.textContent.length - 1);
-            just_notes.recalculate_position_of_preview();
-            just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
-        }
-
-        if (event.key.length > 1 )
-        {
-            return;
-        }
-        
-        preview_ukrainian.textContent = preview_ukrainian.textContent + event.key;
-        just_notes.recalculate_position_of_preview();
-        just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
-        
-        event.preventDefault();
     };
 </script>
 <script>
@@ -113,7 +65,6 @@
         var body = document.getElementById("body");
         body.focus();
         just_notes.rem_related_height = document.getElementById("preview").offsetHeight;
-        document.getElementById("preview").style["border-right-color"] = just_notes.background_color;
     };
 </script>
 <script>
@@ -256,23 +207,11 @@
         }
     };
 </script>
-<script>
-    just_notes.preview_on_transition_end = function()
-    {
-        var target = event.originalTarget || event.target;
-        if(target.style["border-right-color"] == just_notes.background_color)
-        {
-            target.style["border-right-color"] = just_notes.cursor_color;
-            return;
-        }
-        if(target.style["border-right-color"] == just_notes.cursor_color)
-        {
-            target.style["border-right-color"] = just_notes.background_color;
-            return;
-        }
-        target.style["border-right-color"] = just_notes.background_color;
-    };
-</script>
+<style>
+    [contenteditable] {
+        outline: 0px solid transparent;
+    }
+</style>
 
 
 <body 
@@ -326,20 +265,25 @@
         id="preview"
         style="position: absolute;
             bottom: 3rem;
-            left: 50%;
+            width: 100%;
             color: rosybrown;
-            border-right-width: 0.2rem;
-            border-right-style: solid;
-            border-right-color: rosybrown;
-            transition: border-right-color 0.4s ease-in-out;
-            transition-delay: 0.3s;
             min-width: 0.2rem;
-            min-height: 1.2rem;"
-        ontransitionend="just_notes.preview_on_transition_end()">
-        <div 
-            id="preview-ukrainian"
-            style="white-space: pre-wrap;
-                width: fit-content;"></div>
+            min-height: 1.2rem;">
+        <div
+            id="splitted-text"
+            class="splitted-text"
+            style="
+                max-width: 60rem;
+                min-height: 1rem;
+                color: rosybrown;
+                margin: auto;
+                width: fit-content;"
+            contenteditable="true"
+            onpaste="just_document.on_paste()"
+            onkeydown="just_notes.on_key_down()"
+            onkeyup="just_document.on_key_up()"
+            onchange="just_document.on_paste()"
+            oninput="just_document.on_input()">Hello</div>
 
         
     </div>

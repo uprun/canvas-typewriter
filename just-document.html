@@ -37,7 +37,7 @@
 </style>
 <script>
     just_notes = {};
-    just_notes.debug_logging = true;
+    just_notes.debug_logging = false;
     just_notes.background_color = "black";
     just_notes.cursor_color = "rosybrown";
 </script>
@@ -66,62 +66,46 @@
     };
 </script>
 <script>
+    just_document.tabulate_handler = function(selection)
+    {
+        event.preventDefault();
+        var start = selection.anchorNode.parentNode;
+        var finish = selection.focusNode.parentNode;
+        
+        if ( finish.offsetTop < start.offsetTop)
+        {
+            var swap = start;
+            start = finish;
+            finish = swap;
+        }
+        if (event.shiftKey)
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.remove_four_leading_spaces(start);
+            }
+            just_document.remove_four_leading_spaces(start);
+        }
+        else
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.insert_four_leading_spaces(start);
+            }
+            just_document.insert_four_leading_spaces(start);
+        }  
+    };
+</script>
+<script>
     
     just_notes.on_key_down = function()
     {
         var selection = document.getSelection();
-        just_notes.debug_logging && console.log(event);
+        just_notes.debug_logging && console.log({event: event, selection: selection});
         if(event.key == "Tab")
         {
-            event.preventDefault();
-            var start = selection.anchorNode.parentNode;
-            var finish = selection.focusNode.parentNode;
-            
-            if ( finish.offsetTop < start.offsetTop)
-            {
-                var swap = start;
-                start = finish;
-                finish = swap;
-            }
-            if (event.shiftKey)
-            {
-                for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
-                {
-                    just_document.remove_four_leading_spaces(start);
-                }
-                just_document.remove_four_leading_spaces(start);
-            }
-            else
-            {
-                for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
-                {
-                    just_document.insert_four_leading_spaces(start);
-                }
-                just_document.insert_four_leading_spaces(start);
-            }
-            
-            
-            
-        }
-        if(event.key == "Enter")
-        {
-            // event.preventDefault();
-            // // create a note
-            // just_notes.debug_logging && console.log("create note");
-            // const template_for_just_notes = document.getElementById("template-for-just-note");
-            
-            // const copy = template_for_just_notes.cloneNode(true);// deep copy
-            // const children = Array.from(copy.children);
-            // var copy_preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
-            // copy.id = "";
-            // document.body.append(copy);
-            // copy.style.left = (actual_preview.offsetLeft) + "px";
-            // copy.style.top = (actual_preview.offsetTop) + "px";
-            // copy.style.bottom = "";
-            // copy.style.visibility = "visible";
-            // copy_preview_ukrainian.textContent = preview_ukrainian.textContent;
-            // preview_ukrainian.textContent = "";
-
+            just_document.tabulate_handler(selection);
+            return;
         }
     };
 </script>
@@ -147,7 +131,11 @@
             var clone = template_for_string.cloneNode(true);
             clone.id = "";
             clone.classList.remove("template");
-            clone.textContent = string;
+            for(var char of string)
+            {
+                clone.appendChild(document.createTextNode(char));
+            }
+            
             container.appendChild(clone);
 
         }
@@ -167,10 +155,10 @@
     just_document.switch_full_screen = async function()
     {
         var element = document.documentElement;
-        const rfs = element.requestFullscreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
+        const request_full_screen = element.requestFullscreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
         try
         {
-            await rfs.call(element);
+            await request_full_screen.call(element);
         }
         catch(e)
         {
@@ -183,7 +171,7 @@
 <script>
     just_document.on_key_up = function()
     {
-        console.log(event);
+        //console.log(event);
 
     };
 </script>
@@ -192,6 +180,14 @@
     {
         console.log(event);
     }
+</script>
+<script>
+    just_document.on_input = function()
+    {
+        //event.preventDefault();
+        var selection = document.getSelection();
+        console.log({event: event, selection: selection});
+    };
 </script>
 
 
@@ -240,7 +236,7 @@
         onkeydown="just_notes.on_key_down()"
         onkeyup="just_document.on_key_up()"
         onchange="just_document.on_paste()"
-        oninput="just_document.on_paste()"></div>
+        oninput="just_document.on_input()"></div>
 
 </body>
 </html>

@@ -1,1 +1,2 @@
 1) functions should be small (40 lines top) and 100 chars per line max, ideally
+2) if it takes more than one day to implement, I took wrong direction [2023-02-02]

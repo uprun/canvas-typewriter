@@ -43,19 +43,13 @@
     just_notes.shift_canvas_by_delta = function(deltaX, deltaY)
     {
         just_notes.debug_logging && console.log({deltaX: deltaX, deltaY: deltaY});
-        var a_lot_of_nodes = document.getElementsByClassName("just-note");
-        for(var individual of a_lot_of_nodes)
+        var a_lot_of_nodes_2 = document.getElementsByClassName("actual-document");
+        for(var individual of a_lot_of_nodes_2)
         {
             individual.style.top = (individual.offsetTop - deltaY) + "px";
             individual.style.left = (individual.offsetLeft - deltaX) + "px";
 
         }
-    };
-</script>
-<script>
-    just_notes.on_load = function()
-    {
-        just_notes.rem_related_height = document.getElementById("preview").offsetHeight;
     };
 </script>
 <script>
@@ -65,6 +59,7 @@
         just_notes.debug_logging && console.log(event);
         var target = event.originalTarget || event.target;
         just_notes.being_dragged_element = target.offsetParent;
+        console.log(just_notes.being_dragged_element);
         just_notes.drag_offset = 
         {
             x: target.offsetParent.offsetLeft - event.pageX,
@@ -78,16 +73,22 @@
 <script>
     just_notes.select_draggable_element_2 = function()
     {
-        just_notes.debug_logging && console.log(event);
-        var target = event.originalTarget || event.target;
-        just_notes.being_dragged_element = target;
-        just_notes.drag_offset = 
+        if (("style" in just_notes.being_dragged_element) == false)
         {
-            x: target.offsetLeft - event.pageX,
-            y: target.offsetTop - event.pageY
+            just_notes.debug_logging && console.log(event);
+            var target = event.originalTarget || event.target;
+            just_notes.being_dragged_element = target;
+            console.log(just_notes.being_dragged_element);
+            just_notes.drag_offset = 
+            {
+                x: target.offsetLeft - event.pageX,
+                y: target.offsetTop - event.pageY
+
+            }
+            event.preventDefault();
 
         }
-        event.preventDefault();
+        
     };
 </script>
 <script>
@@ -317,22 +318,27 @@
 <script>
     just_document.create_text_note = function()
     {
-        const actual_preview = document.getElementById("preview");
-        const some = document.getElementById("splitted-text");
+        const splitted_preview = document.getElementById("splitted-text");
+        var text = [];
+        for(var child of splitted_preview.childNodes)
+        {
+            text.push(child.textContent);
+        }
         const template_for_splitted_note = document.getElementById("template-for-splitted-text");
             
         const copy = template_for_splitted_note.cloneNode(true);// deep copy
         copy.id = "";
         document.body.append(copy);
         copy.classList.remove("template");
-        copy.style.left = (some.offsetLeft) + "px";
-        copy.style.top = (some.offsetParent.offsetTop) + "px";
+        copy.style.left = (splitted_preview.offsetLeft) + "px";
+        copy.style.top = (splitted_preview.offsetParent.offsetTop - just_notes.rem_related_height * 1) + "px";
         copy.style.bottom = "";
         copy.style.visibility = "visible";
         copy.removeAttribute("contenteditable");
-        const text = some.textContent;
-        copy.textContent = text;
-        some.textContent = "";
+        just_document.helper_populate_paragraphs(copy);
+        //const text = splitted_preview.textContent;
+        console.log(text);
+        splitted_preview.textContent = "";
 
     };
 </script>
@@ -381,8 +387,10 @@
     just_notes.on_load = function()
     {
         var body = document.getElementById("body");
+        just_notes.rem_related_height = document.getElementById("preview").offsetHeight;
         body.focus();
         just_document.populate_paragraphs();
+        
     };
 </script>
 
@@ -453,6 +461,7 @@
         id="template-for-paragraph"
         style="white-space: pre-wrap;"
         class="template"
+        onmousedown="just_notes.select_draggable_element()"
         ></div>
     <div
         id="template-for-just-note" 
@@ -478,7 +487,7 @@
 
     <div
         id="template-for-splitted-text"
-        class="splitted-text template prevent-select"
+        class="splitted-text template prevent-select actual-document"
         style="
             position: absolute;
             max-width: 60rem;
@@ -493,6 +502,8 @@
             padding: 0.5rem;
             white-space: pre-wrap;"
         onmousedown="just_notes.select_draggable_element_2()"
+        onmouseleave="just_notes.just_prevent_default_handler()"
+        onmouseout="just_notes.just_prevent_default_handler()"
         onpaste="just_document.on_paste()"
         onkeydown="just_document.on_key_down()"
         onkeyup="just_document.on_key_up()"

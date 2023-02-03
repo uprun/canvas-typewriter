@@ -76,6 +76,21 @@
 
 </script>
 <script>
+    just_notes.select_draggable_element_2 = function()
+    {
+        just_notes.debug_logging && console.log(event);
+        var target = event.originalTarget || event.target;
+        just_notes.being_dragged_element = target;
+        just_notes.drag_offset = 
+        {
+            x: target.offsetLeft - event.pageX,
+            y: target.offsetTop - event.pageY
+
+        }
+        event.preventDefault();
+    };
+</script>
+<script>
     just_notes.body_on_mouse_move = function()
     {
         just_notes.debug_logging && console.log(event);
@@ -282,6 +297,45 @@
         }
     };
 </script>
+<script>
+    just_document.helper_populate_paragraphs = function(container)
+    {
+        var template_for_string = document.getElementById("template-for-paragraph");
+        for(var string of just_document.paragraphs)
+        {
+            var clone = template_for_string.cloneNode(true);
+            clone.id = "";
+            clone.classList.remove("template");
+            
+            clone.textContent = string;
+            
+            container.appendChild(clone);
+
+        }
+    };
+</script>
+<script>
+    just_document.create_text_note = function()
+    {
+        const actual_preview = document.getElementById("preview");
+        const some = document.getElementById("splitted-text");
+        const template_for_splitted_note = document.getElementById("template-for-splitted-text");
+            
+        const copy = template_for_splitted_note.cloneNode(true);// deep copy
+        copy.id = "";
+        document.body.append(copy);
+        copy.classList.remove("template");
+        copy.style.left = (some.offsetLeft) + "px";
+        copy.style.top = (some.offsetParent.offsetTop) + "px";
+        copy.style.bottom = "";
+        copy.style.visibility = "visible";
+        copy.removeAttribute("contenteditable");
+        const text = some.textContent;
+        copy.textContent = text;
+        some.textContent = "";
+
+    };
+</script>
 
 <script>
     
@@ -297,7 +351,7 @@
         if(event.key == "Enter" && (event.metaKey || event.ctrlKey))
         {
             event.preventDefault();
-            //create a note
+            just_document.create_text_note();
             return;
         }
         event.stopPropagation();
@@ -320,18 +374,7 @@
     just_document.populate_paragraphs = function()
     {
         var container = document.getElementById("splitted-text");
-        var template_for_string = document.getElementById("template-for-paragraph");
-        for(var string of just_document.paragraphs)
-        {
-            var clone = template_for_string.cloneNode(true);
-            clone.id = "";
-            clone.classList.remove("template");
-            
-            clone.textContent = string;
-            
-            container.appendChild(clone);
-
-        }
+        just_document.helper_populate_paragraphs(container);
     };
 </script>
 <script>
@@ -432,6 +475,29 @@
 
         
     </div>
+
+    <div
+        id="template-for-splitted-text"
+        class="splitted-text template prevent-select"
+        style="
+            position: absolute;
+            max-width: 60rem;
+            min-height: 1rem;
+            border: 0.2rem;
+            border-radius: 0.2rem;
+            border-color: rosybrown;
+            border-style: solid;
+            color: rosybrown;
+            margin: auto;
+            width: fit-content;
+            padding: 0.5rem;
+            white-space: pre-wrap;"
+        onmousedown="just_notes.select_draggable_element_2()"
+        onpaste="just_document.on_paste()"
+        onkeydown="just_document.on_key_down()"
+        onkeyup="just_document.on_key_up()"
+        onchange="just_document.on_paste()"
+        oninput="just_document.on_input()"></div>
 
     <div
         id="preview"

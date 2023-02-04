@@ -278,7 +278,8 @@
     
     just_notes.on_key_down = function()
     {
-        if(event.key == "Enter")
+        var target = event.originalTarget || event.target;
+        if(event.key == "Enter" && target.id == "body")
         {
             event.preventDefault();
             document.getElementById("splitted-text").focus();
@@ -303,7 +304,7 @@
     };
 </script>
 <script>
-    just_document.create_text_note = function()
+    just_document.create_text_note = async function()
     {
         const splitted_preview = document.getElementById("splitted-text");
         var text = [];
@@ -327,13 +328,37 @@
         splitted_preview.textContent = "";
         splitted_preview.blur();
 
+        const encoder = new TextEncoder();
+        var message = text.join("\n");
+        console.log(message);
+        const data = encoder.encode(message);
+        const hash = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
+        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+        console.log(hashHex);
+        copy.id = hashHex;
+
+        let some = {
+            type: "initial-version",
+            text: text,
+            id: hashHex
+        };
+
+        fetch("/post/data/here", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify(some)
+            }).then(res => {
+        console.log("Request complete! response:", res);
+        });
+
         
 
     };
 </script>
 <script>
     
-    just_document.on_key_down = function()
+    just_document.on_key_down = async function()
     {
         var selection = document.getSelection();
         just_notes.debug_logging && console.log({event: event, selection: selection});
@@ -345,7 +370,7 @@
         if(event.key == "Enter" && (event.metaKey || event.ctrlKey))
         {
             event.preventDefault();
-            just_document.create_text_note();
+            await just_document.create_text_note();
             return;
         }
         event.stopPropagation();
@@ -374,9 +399,10 @@
         {
             event.preventDefault();
             just_document.commit_changes();
+            var target = event.originalTarget || event.target;
+            console.log(target);
             return;
         }
-        event.stopPropagation();
         return false;
     };
 </script>

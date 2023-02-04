@@ -325,6 +325,9 @@
         //const text = splitted_preview.textContent;
         console.log(text);
         splitted_preview.textContent = "";
+        splitted_preview.blur();
+
+        
 
     };
 </script>
@@ -343,6 +346,34 @@
         {
             event.preventDefault();
             just_document.create_text_note();
+            return;
+        }
+        event.stopPropagation();
+        return false;
+    };
+</script>
+<script>
+    just_document.commit_changes = function()
+    {
+
+    };
+</script>
+
+<script>
+    
+    just_document.on_key_down_for_created_note = function()
+    {
+        var selection = document.getSelection();
+        just_notes.debug_logging && console.log({event: event, selection: selection});
+        if(event.key == "Tab")
+        {
+            just_document.tabulate_handler(selection);
+            return;
+        }
+        if(event.key == "Enter" && (event.metaKey || event.ctrlKey))
+        {
+            event.preventDefault();
+            just_document.commit_changes();
             return;
         }
         event.stopPropagation();
@@ -470,7 +501,7 @@
         onmouseleave="just_notes.just_prevent_default_handler()"
         onmouseout="just_notes.just_prevent_default_handler()"
         onpaste="just_document.on_paste()"
-        onkeydown="just_document.on_key_down()"
+        onkeydown="just_document.on_key_down_for_created_note()"
         onkeyup="just_document.on_key_up()"
         onchange="just_document.on_paste()"
         oninput="just_document.on_input()"></div>

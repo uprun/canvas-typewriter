@@ -1,3 +1,5 @@
 1) functions should be small (40 lines top) and 100 chars per line max, ideally
 2) if it takes more than one day to implement, I took wrong direction [2023-02-02]
 3) don't over-optimize, "The root of all evil is premature optimization" Dijkstra
+4) if there are too many statements then something is wrong with the design or with requirements
+5) just save the whole document on every commit [Ctrl|Cmnd + Enter]

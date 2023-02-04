@@ -58,38 +58,21 @@
     {
         just_notes.debug_logging && console.log(event);
         var target = event.originalTarget || event.target;
-        just_notes.being_dragged_element = target.offsetParent;
-        console.log(just_notes.being_dragged_element);
+
+        if(target.getAttribute("contentEditable") != "true")
+            return;
+
+        
+        just_notes.being_dragged_element = target;
         just_notes.drag_offset = 
         {
-            x: target.offsetParent.offsetLeft - event.pageX,
-            y: target.offsetParent.offsetTop - event.pageY
+            x: target.offsetLeft - event.pageX,
+            y: target.offsetTop - event.pageY
 
         }
         event.preventDefault();
     };
 
-</script>
-<script>
-    just_notes.select_draggable_element_2 = function()
-    {
-        if (("style" in just_notes.being_dragged_element) == false)
-        {
-            just_notes.debug_logging && console.log(event);
-            var target = event.originalTarget || event.target;
-            just_notes.being_dragged_element = target;
-            console.log(just_notes.being_dragged_element);
-            just_notes.drag_offset = 
-            {
-                x: target.offsetLeft - event.pageX,
-                y: target.offsetTop - event.pageY
-
-            }
-            event.preventDefault();
-
-        }
-        
-    };
 </script>
 <script>
     just_notes.body_on_mouse_move = function()
@@ -189,7 +172,11 @@
 <script>
     lisperanto.body_onmousedown = function()
     {
-        just_notes.debug_logging && console.log(event);
+        //just_notes.debug_logging && 
+        var target = event.explicitOriginalTarget || event.target;
+        if (target.id != "body")
+            return;
+        console.log(event);
         lisperanto.body_is_dragged = true;
         lisperanto.total_movement_while_body_drag = 0;
     };
@@ -299,10 +286,10 @@
     };
 </script>
 <script>
-    just_document.helper_populate_paragraphs = function(container)
+    just_document.helper_populate_paragraphs = function(paragraphs, container, template_name)
     {
-        var template_for_string = document.getElementById("template-for-paragraph");
-        for(var string of just_document.paragraphs)
+        var template_for_string = document.getElementById(template_name);
+        for(var string of paragraphs)
         {
             var clone = template_for_string.cloneNode(true);
             clone.id = "";
@@ -334,15 +321,13 @@
         copy.style.top = (splitted_preview.offsetParent.offsetTop - just_notes.rem_related_height * 1) + "px";
         copy.style.bottom = "";
         copy.style.visibility = "visible";
-        copy.removeAttribute("contenteditable");
-        just_document.helper_populate_paragraphs(copy);
+        just_document.helper_populate_paragraphs(text, copy, "template-for-paragraph");
         //const text = splitted_preview.textContent;
         console.log(text);
         splitted_preview.textContent = "";
 
     };
 </script>
-
 <script>
     
     just_document.on_key_down = function()
@@ -380,7 +365,7 @@
     just_document.populate_paragraphs = function()
     {
         var container = document.getElementById("splitted-text");
-        just_document.helper_populate_paragraphs(container);
+        just_document.helper_populate_paragraphs(just_document.paragraphs, container, "template-for-paragraph");
     };
 </script>
 <script>
@@ -459,40 +444,19 @@
     onclick="lisperanto.bodyOnClick()">
     <div 
         id="template-for-paragraph"
-        style="white-space: pre-wrap;"
+        style="white-space: pre-wrap;
+            cursor: auto;"
         class="template"
-        onmousedown="just_notes.select_draggable_element()"
         ></div>
-    <div
-        id="template-for-just-note" 
-        class="just-note"
-        style="position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            color: rosybrown;
-            visibility: hidden;
-            width: max-content;"
-        onmouseleave="just_notes.just_prevent_default_handler()"
-        onmouseout="just_notes.just_prevent_default_handler()">
-        <div 
-            id="preview-ukrainian"
-            class="prevent-select cursor-drag"
-            style="white-space: pre-wrap;"
-            onmousedown="just_notes.select_draggable_element()"
-            onmouseleave="just_notes.just_prevent_default_handler()"
-            onmouseout="just_notes.just_prevent_default_handler()">some   why</div>
-
-        
-    </div>
 
     <div
         id="template-for-splitted-text"
-        class="splitted-text template prevent-select actual-document"
+        class="splitted-text template actual-document"
         style="
             position: absolute;
             max-width: 60rem;
             min-height: 1rem;
-            border: 0.2rem;
+            border: 0.5rem;
             border-radius: 0.2rem;
             border-color: rosybrown;
             border-style: solid;
@@ -501,7 +465,8 @@
             width: fit-content;
             padding: 0.5rem;
             white-space: pre-wrap;"
-        onmousedown="just_notes.select_draggable_element_2()"
+        contenteditable="true"
+        onmousedown="just_notes.select_draggable_element()"
         onmouseleave="just_notes.just_prevent_default_handler()"
         onmouseout="just_notes.just_prevent_default_handler()"
         onpaste="just_document.on_paste()"

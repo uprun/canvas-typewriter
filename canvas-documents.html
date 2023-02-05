@@ -304,6 +304,20 @@
     };
 </script>
 <script>
+    just_document.calculate_hash = async function(text)
+    {
+        message = text.join("\n");
+        //console.log(message);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(message);
+        const hash = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
+        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+        //console.log(hashHex);
+        return hashHex;
+    };
+</script>
+<script>
     just_document.create_text_note = async function()
     {
         const splitted_preview = document.getElementById("splitted-text");
@@ -328,30 +342,23 @@
         splitted_preview.textContent = "";
         splitted_preview.blur();
 
-        const encoder = new TextEncoder();
-        var message = text.join("\n");
-        console.log(message);
-        const data = encoder.encode(message);
-        const hash = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
-        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
-        console.log(hashHex);
-        copy.id = hashHex;
+        
+        
+        copy.id = await just_document.calculate_hash(text);
 
         let some = {
             type: "initial-version",
             text: text,
-            id: hashHex
+            id: copy.id
         };
 
-        fetch("/post/data/here", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify(some)
-            }).then(res => {
-        console.log("Request complete! response:", res);
-        });
-
+        // fetch("/post/data/here", {
+        //     method: "POST",
+        //     headers: {'Content-Type': 'application/json'}, 
+        //     body: JSON.stringify(some)
+        //     }).then(res => {
+        // console.log("Request complete! response:", res);
+        // });
         
 
     };
@@ -468,6 +475,24 @@
     }
 </script>
 <script>
+    just_document.on_input_for_created_note = async function()
+    {
+        var target = event.originalTarget || event.target;
+        console.log(target);
+        var text = [];
+        for(var child of target.childNodes)
+        {
+            text.push(child.textContent);
+        }
+        const hash = await just_document.calculate_hash(text);
+        if(target.id != hash)
+        {
+            // show commit button
+        }
+
+    };
+</script>
+<script>
     just_document.on_input = function()
     {
         //event.preventDefault();
@@ -530,7 +555,7 @@
         onkeydown="just_document.on_key_down_for_created_note()"
         onkeyup="just_document.on_key_up()"
         onchange="just_document.on_paste()"
-        oninput="just_document.on_input()"></div>
+        oninput="just_document.on_input_for_created_note()"></div>
 
     <div
         id="preview"

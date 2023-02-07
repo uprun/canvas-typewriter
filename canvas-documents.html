@@ -101,26 +101,6 @@
     };
 </script>
 <script>
-    just_notes.deselect_draggable_element = function()
-    {
-        just_notes.debug_logging && console.log(event);
-        var target = event.explicitOriginalTarget || event.target;
-        if(event.toElement && event.toElement.id != "preview-ukrainian")
-        {
-            if( target.id == "body")
-            {
-                just_notes.being_dragged_element = {};
-                just_notes.debug_logging && console.log(event);
-                
-            }
-        }
-        
-        
-        lisperanto.body_is_dragged = false;
-
-    };
-</script>
-<script>
     just_notes.body_on_mouse_up = function()
     {
         just_notes.being_dragged_element = {};
@@ -528,8 +508,6 @@
     onload="just_notes.on_load()"
     onmousemove="just_notes.body_on_mouse_move()"
     onmouseup="just_notes.body_on_mouse_up()"
-    onmouseout="just_notes.deselect_draggable_element()"
-    onmouseleave="just_notes.deselect_draggable_element()"
     onwheel="just_notes.body_on_wheel()"
 
     ontouchmove="lisperanto.bodyOnTouchMove()"

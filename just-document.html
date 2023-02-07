@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>just-document</title>
+</head>
+<style>
+    .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+</style>
+<style>
+    .cursor-drag {
+        cursor: grab;
+    }
+</style>
+<style>
+    [contenteditable] {
+        outline: 0px solid transparent;
+    }
+</style>
+<style>
+    html, 
+    body {
+        height: 100%;
+        width: 100%;
+        font-family: 'Input Mono', monospace;
+    }
+</style>
+<style>
+    .template {
+        display: none;
+    }
+</style>
+<script>
+    just_notes = {};
+    just_notes.debug_logging = false;
+    just_notes.background_color = "black";
+    just_notes.cursor_color = "rosybrown";
+</script>
+<script>
+    just_document = {};
+</script>
+<script>
+    just_document.remove_four_leading_spaces = function(start)
+    {
+        for(var k = 0; k < 4; k++)
+        {
+            if(start.childNodes.length > 1 && start.childNodes[0].textContent == " ")
+            {
+                start.removeChild(start.childNodes[0]);
+            }
+        }
+    };
+</script>
+<script>
+    just_document.insert_four_leading_spaces = function(start)
+    {
+        for(var k = 0; k < 4; k++)
+        {
+            start.insertBefore(document.createTextNode(" "), start.childNodes[0]);
+        }
+    };
+</script>
+<script>
+    just_document.tabulate_handler = function(selection)
+    {
+        event.preventDefault();
+        var start = selection.anchorNode.parentNode;
+        var finish = selection.focusNode.parentNode;
+        
+        if ( finish.offsetTop < start.offsetTop)
+        {
+            var swap = start;
+            start = finish;
+            finish = swap;
+        }
+        if (event.shiftKey)
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.remove_four_leading_spaces(start);
+            }
+            just_document.remove_four_leading_spaces(start);
+        }
+        else
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.insert_four_leading_spaces(start);
+            }
+            just_document.insert_four_leading_spaces(start);
+        }  
+    };
+</script>
+<script>
+    
+    just_notes.on_key_down = function()
+    {
+        var selection = document.getSelection();
+        just_notes.debug_logging && console.log({event: event, selection: selection});
+        if(event.key == "Tab")
+        {
+            just_document.tabulate_handler(selection);
+            return;
+        }
+    };
+</script>
+
+<script>
+    just_document.paragraphs = [
+        "hello, my name is Oleksandr Kryvonos",
+        "this is a test for Tabulation algorithm",
+        "just consider that every line is a paragraph",
+        "with this every line of code is a paragraph as well",
+        "what I would like to achieve is easy typing experience",
+        "yes it would be a blank canvas problem,",
+        "but only for some time"
+    ];
+</script>
+<script>
+    just_document.populate_paragraphs = function()
+    {
+        var container = document.getElementById("splitted-text");
+        var template_for_string = document.getElementById("template-for-paragraph");
+        for(var string of just_document.paragraphs)
+        {
+            var clone = template_for_string.cloneNode(true);
+            clone.id = "";
+            clone.classList.remove("template");
+            for(var char of string)
+            {
+                clone.appendChild(document.createTextNode(char));
+            }
+            
+            container.appendChild(clone);
+
+        }
+    };
+</script>
+<script>
+    just_notes.on_load = function()
+    {
+        var body = document.getElementById("body");
+        body.focus();
+        just_document.populate_paragraphs();
+    };
+</script>
+
+<script>
+
+    just_document.switch_full_screen = async function()
+    {
+        var element = document.documentElement;
+        const request_full_screen = element.requestFullscreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
+        try
+        {
+            await request_full_screen.call(element);
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+        
+        console.log("entering full screen");
+    };
+</script>
+<script>
+    just_document.on_key_up = function()
+    {
+        //console.log(event);
+
+    };
+</script>
+<script>
+    just_document.on_paste = function()
+    {
+        console.log(event);
+    }
+</script>
+<script>
+    just_document.on_input = function()
+    {
+        //event.preventDefault();
+        var selection = document.getSelection();
+        console.log({event: event, selection: selection});
+    };
+</script>
+
+
+
+<body 
+    id="body"
+    style="background-color: black;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;" 
+    class=""
+    
+    onload="just_notes.on_load()"
+    >
+
+    <div 
+        class="prevent-select"
+        style="position: absolute;
+        left: 1rem;
+        top: 1rem;
+        border-color: orchid;
+        border-style: solid;
+        border-width: 0.2rem;
+        border-radius: 0.3rem;
+        color: lightblue;
+        padding: 0.4rem;"
+        onclick="just_document.switch_full_screen()">F</div>
+    <div 
+        id="template-for-paragraph"
+        style="white-space: pre-wrap;"
+        class="template"
+        ></div>
+
+    <div
+        id="splitted-text"
+        class="splitted-text"
+        style="
+            max-width: 60rem;
+            min-height: 1rem;
+            color: rosybrown;
+            margin: auto;
+            padding-top: 1rem;"
+        contenteditable="true"
+        onpaste="just_document.on_paste()"
+        onkeydown="just_notes.on_key_down()"
+        onkeyup="just_document.on_key_up()"
+        onchange="just_document.on_paste()"
+        oninput="just_document.on_input()"></div>
+
+</body>
+</html>

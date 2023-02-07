@@ -43,10 +43,10 @@ namespace lisperanto.Controllers
         }
 
         [HttpGet]
-        public async Task<string[]> ListOfOperations()
+        public async Task<string[]> ListOfDocuments(string? query = "*")
         {
-            string directory_path = Path.Combine(Directory.GetCurrentDirectory(), "operations");
-            var files = Directory.GetFiles(directory_path).OrderBy(path => path).Select(path => Path.GetFileNameWithoutExtension(path)).ToArray();
+            string directory_path = Path.Combine(Directory.GetCurrentDirectory(), "..");
+            var files = Directory.GetFiles(directory_path,query, SearchOption.AllDirectories).OrderBy(path => path).ToArray();
             return files;
         }
 
@@ -65,7 +65,7 @@ namespace lisperanto.Controllers
                 return new DocumentResult
                 {
                     Path = path,
-                    Value = await stream_reader.ReadLineAsync()
+                    Text = new [] {await stream_reader.ReadLineAsync()}
                 };
             }
         }

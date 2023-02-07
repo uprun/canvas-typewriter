@@ -22,6 +22,7 @@
     body {
         height: 100%;
         width: 100%;
+        font-size: 0.9rem;
     }
 </style>
 <script>
@@ -318,14 +319,9 @@
     };
 </script>
 <script>
-    just_document.create_text_note = async function()
+    just_document.create_document_helper = async function(text)
     {
         const splitted_preview = document.getElementById("splitted-text");
-        var text = [];
-        for(var child of splitted_preview.childNodes)
-        {
-            text.push(child.textContent);
-        }
         const template_for_splitted_note = document.getElementById("template-for-splitted-text");
             
         const copy = template_for_splitted_note.cloneNode(true);// deep copy
@@ -346,19 +342,19 @@
         
         copy.id = await just_document.calculate_hash(text);
 
-        let some = {
-            type: "initial-version",
-            text: text,
-            id: copy.id
-        };
-
-        // fetch("/post/data/here", {
-        //     method: "POST",
-        //     headers: {'Content-Type': 'application/json'}, 
-        //     body: JSON.stringify(some)
-        //     }).then(res => {
-        // console.log("Request complete! response:", res);
-        // });
+    };
+</script>
+<script>
+    just_document.create_text_note = async function()
+    {
+        const splitted_preview = document.getElementById("splitted-text");
+        var text = [];
+        for(var child of splitted_preview.childNodes)
+        {
+            text.push(child.textContent);
+        }
+        
+        just_document.create_document_helper(text);
         
 
     };
@@ -501,6 +497,24 @@
     };
 </script>
 
+<script>
+    just_document.open_file = function() {
+        var input = event.target;
+
+        var reader = new FileReader();
+        reader.onload = function() {
+            var text = reader.result;
+
+            const splitted = text.split(/\r?\n/);
+            const splitted_preview = document.getElementById("splitted-text");
+            splitted_preview.textContent = text;
+
+            just_document.create_document_helper(splitted);
+            console.log(reader.result);
+        };
+        reader.readAsText(input.files[0]);
+    };
+</script>
 
 <body 
     id="body"
@@ -530,7 +544,7 @@
             cursor: auto;"
         class="template"
         ></div>
-
+    <input type='file' onchange='just_document.open_file()'>
     <div
         id="template-for-splitted-text"
         class="splitted-text template actual-document"

@@ -1,0 +1,17 @@
+<script>
+    function hello()
+    {
+        navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+        })
+        .then(device => { console.log(device);
+            return device.gatt.connect(); })
+        .then(server => console.log(server))
+        .catch(error => { console.error(error); });
+    };
+</script>
+<body>
+    <button onclick="hello()">
+        Bluetooth
+    </button>
+</body>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ask</title>
+</head>
+<style>
+    .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+</style>
+<style>
+    [contenteditable] {
+        outline: 1px solid rosybrown;
+    }
+</style>
+<style>
+    html, 
+    body {
+        height: 100%;
+        width: 100%;
+        font-family: 'Input Mono', monospace;
+    }
+</style>
+<style>
+    .template {
+        display: none;
+    }
+</style>
+<script>
+    just_notes = {};
+    just_notes.debug_logging = false;
+    just_notes.background_color = "black";
+    just_notes.cursor_color = "rosybrown";
+</script>
+<script>
+    just_document = {};
+</script>
+
+
+<script>
+    just_notes.on_load = function()
+    {
+        var body = document.getElementById("body");
+        // body.focus();
+        // just_document.populate_paragraphs();
+    };
+</script>
+<script>
+    ask = {};
+    ask.remove_word = function( index, words)
+    {
+        //name_text.split(/[\s\(\)]/).filter(e => /^[\d\._]+$/g.test(e));
+        copy = JSON.parse(JSON.stringify(words));
+        copy.splice(index, 1);
+        return copy;
+    };
+</script>
+<script>
+    ask.split_query = function(query)
+    {
+        return query.split(/[\s]/).filter(e => e != "");
+    };
+</script>
+<script>
+    ask.getRandomInt = function(max) 
+    {
+        return Math.floor(Math.random() * max);
+    };
+    ask.remove_random_word = function(words)
+    {
+        var index = ask.getRandomInt(words.length);
+        return ask.remove_word(index, words);
+
+    };
+</script>
+<script>
+    just_document.on_input = function()
+    {
+        //console.log(event);
+        var target = event.originalTarget;
+        query = target.textContent
+        console.log(query);
+        var words = ask.split_query(query);
+        console.log(words)
+        console.log(ask.remove_random_word(words));
+
+    };
+</script>
+
+
+
+<body 
+    id="body"
+    style="background-color: black;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;" 
+    class=""
+    
+    onload="just_notes.on_load()"
+    >
+    <div 
+        id="template-for-paragraph"
+        style="white-space: pre-wrap;"
+        class="template"
+        ></div>
+
+    <div
+        id="splitted-text"
+        class="splitted-text"
+        style="
+            max-width: 60rem;
+            min-height: 1rem;
+            color: rosybrown;
+            padding: 1rem;
+            margin: auto;"
+        contenteditable="true"
+        oninput="just_document.on_input()"></div>
+
+</body>
+</html>

@@ -44,8 +44,8 @@
 <script>
     just_notes.on_load = function()
     {
-        var body = document.getElementById("body");
-        // body.focus();
+        var query_element = document.getElementById("ask-me-anything-query");
+        query_element.focus();
         // just_document.populate_paragraphs();
     };
 </script>
@@ -120,10 +120,14 @@
             max-width: 60rem;
             min-height: 1rem;
             color: rosybrown;
-            padding: 1rem;
-            margin: auto;"
-        contenteditable="true"
-        oninput="just_document.on_input()"></div>
+            margin: auto;">
+            <div 
+                id="ask-me-anything-query"
+                style="padding: 1rem;
+                    margin: 0.4rem;"
+                contenteditable="true"
+                oninput="just_document.on_input()"></div>
+        </div>
 
 </body>
 </html>

@@ -2,12 +2,12 @@ each parameter should be placed on next line, except for constants
 
 (string-constant "hello")
 (|> // special function call "pipyng call" which means : take result from last execution and pass it as a free parameter to this call
-    toUpperCase
+toUpperCase
 )
 (|>
-    substring
-    begin:
-        (integer-constant "0")
-    end:
-        (integer-constant "-1")
+substring
+begin:
+    (integer-constant "0")
+end:
+    (integer-constant "-1")
 )

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AST</title>
+</head>
+<style>
+    .prevent-select {
+        -webkit-user-select: none; /* Safari */
+        -ms-user-select: none; /* IE 10 and IE 11 */
+        user-select: none; /* Standard syntax */
+    }
+</style>
+<style>
+    .cursor-drag {
+        cursor: grab;
+    }
+</style>
+<style>
+    [contenteditable] {
+        outline: 0px solid transparent;
+    }
+</style>
+<style>
+    html, 
+    body {
+        height: 100%;
+        width: 100%;
+        font-family: 'Input Mono', monospace;
+    }
+</style>
+<style>
+    .template {
+        display: none;
+    }
+</style>
+
+<style>
+    .AST-parameters {
+        margin-left: 0rem;
+    }
+</style>
+<style>
+    .AST-function-call {
+        margin-left: 0rem;
+    }
+</style>
+<style>
+    .AST-parameter-value
+    {
+        margin-left: 1rem;
+    }
+</style>
+<script>
+    just_notes = {};
+    just_notes.debug_logging = false;
+    just_notes.background_color = "black";
+    just_notes.cursor_color = "rosybrown";
+</script>
+<script>
+    just_document = {};
+</script>
+<script>
+    just_notes.on_key_down = function()
+    {
+        var selection = document.getSelection();
+        just_notes.debug_logging && console.log({event: event, selection: selection});
+        if(event.key == "Tab")
+        {
+            just_document.tabulate_handler(selection);
+            return;
+        }
+    };
+</script>
+<script>
+    just_notes.on_load = function()
+    {
+        var body = document.getElementById("body");
+        body.focus();
+        
+    };
+</script>
+
+<script>
+
+    just_document.switch_full_screen = async function()
+    {
+        var element = document.documentElement;
+        const request_full_screen = element.requestFullscreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
+        try
+        {
+            await request_full_screen.call(element);
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+        
+        console.log("entering full screen");
+    };
+</script>
+<script>
+    just_document.on_key_up = function()
+    {
+        //console.log(event);
+
+    };
+</script>
+<script>
+    just_document.on_paste = function()
+    {
+        console.log(event);
+    }
+</script>
+<script>
+    just_document.on_input = function()
+    {
+        //event.preventDefault();
+        var selection = document.getSelection();
+        console.log({event: event, selection: selection});
+    };
+</script>
+<script>
+    AST = {};
+</script>
+
+<script>
+    AST.functions = [];
+    AST.create_function = function()
+    {
+        var func = {
+            module: "sandbox",
+            name: "specify"
+        };
+
+        AST.functions.push(func);
+
+        alert("function created");
+    };
+</script>
+
+
+
+<body 
+    id="body"
+    style="background-color: black;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;" 
+    class=""
+    
+    onload="just_notes.on_load()"
+    >
+
+    <div 
+        class="prevent-select"
+        style="position: absolute;
+        left: 1rem;
+        top: 1rem;
+        border-color: orchid;
+        border-style: solid;
+        border-width: 0.2rem;
+        border-radius: 0.3rem;
+        color: lightblue;
+        padding: 0.4rem;"
+        onclick="just_document.switch_full_screen()">F</div>
+    
+    <div 
+        class="prevent-select"
+        style="position: absolute;
+        left: 3rem;
+        top: 1rem;
+        border-color: orchid;
+        border-style: solid;
+        border-width: 0.2rem;
+        border-radius: 0.3rem;
+        color: lightblue;
+        padding: 0.4rem;"
+        onclick="AST.create_function()">create function</div>
+    <div
+        style="
+        margin-top: 4rem;
+        border-color: rgb(58, 133, 214);
+        border-style: solid;
+        border-width: 0.2rem;
+        border-radius: 0.3rem;
+        color: rgb(245, 6, 229);
+        padding: 0.4rem;">
+            <div>module: just_notes</div>
+            <div>name: on_load</div>
+            <div>definition:</div>
+            <div style="margin-left: 1rem;">
+                <div >
+                    define-local-variable body
+                    <div>|> pipe it as "variable-name" to
+                        <div style="margin-left: 1rem;"> set
+                            <div style="margin-left: 1rem;">
+                                variable-name: <i>body</i>
+                            </div>
+                            <div style="margin-left: 1rem;">
+                                value-expression: 
+                                <div style="margin-left: 1rem;">
+                                    get-global-variable "document"
+                                    <div>|> pipe it as "variable-reference" to:</div>
+                                    <div style="margin-left: 1rem;">(getElementById 
+                                        <div style="margin-left: 1rem;">
+                                            <div>variable-reference: <i>document</i></div>
+                                            <div>id-to-search: (string-constant body)</div>
+                                        </div> )</div>
+
+                                </div>
+                                <i>document.getElementById("body");</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="AST-function-call" >(<br>core.define-variable 
+                    <div class="AST-parameters">
+                        <div>name: "body"</div>
+                    </div>)
+                </div>
+                <div style="margin-left: 0rem;">|> 
+                    <div class="AST-function-call">(<br>=
+                        <div class="AST-parameters">
+                            <div>
+                                expression: 
+                                <div class="AST-parameter-value">
+                                    <div class="AST-function-call">(<br>core.get-variable
+                                        <div class="AST-parameters">
+                                            <div>name: <div class="AST-parameter-value">"document"</div></div>
+                                        </div>)
+                                    </div>
+                                    <div style="margin-left: 0rem;">
+                                        <div>|> 
+                                            <div class="AST-function-call">(<br>getElementById
+                                                <div class="AST-parameters">
+                                                    <div>name: <div class="AST-parameter-value">"body"</div></div>
+                                                </div>)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                                
+                            </div>
+                        </div>)
+                    </div>
+                    
+                </div>
+                {
+                    var body = document.getElementById("body");
+                    body.focus();
+                    
+                };</div>
+
+        </div>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+each parameter should be placed on next line, except for constants
+
+Lisperanto neon bricks == LNB == NeonLisB
+
+(string-constant "hello")
+(|> // special function call "pipyng call" which means : take result from last execution and pass it as a free parameter to this call
+toUpperCase
+)
+(|>
+substring
+begin:
+    (integer-constant "0")
+end:
+    (integer-constant "-1")
+)
+
+module:
+    just_notes
+name:
+    on_load
+parameters_types:
+    begin: integer_constant
+    end: integer_constant
+definition:
+
+(define-constant
+constant-name: 
+    request_full_screen
+expression:
+    (get_field variable:element field:requestFullScreen)
+    (|> or right-operand: (get_field variable:element field:webkitRequestFullScreen)
+    (|> or right-operand: (get_field variable: element field:mozRequestFullScreen))
+    (|> or right-operand: (get_field variable: element field:msRequestFullscreen))
+)
+(|> call expression:(get-variable element))
+(|> await)
+(|> try)
+
+(var
+    "element"
+    (get-field "document" "documentElement")
+)
+(const
+    request_full_screen
+    (||
+        first: (get-field
+            "element"
+            "requestFullScreen"
+        )
+    )
+    |> (|| 
+            first: (get-field
+                "element"
+                "webkitRequestFullScreen"
+            )
+        )
+        |> (|| 
+                first: (get-field
+                    "element"
+                    "mozRequestFullScreen"
+                )
+            )
+            |> (|| 
+                    first: (get-field
+                        "element"
+                        "mozRequestFullScreen"
+                    )
+                )
+)
+(try
+    expressions:
+        (await
+            expression:
+                ()
+        )
+)
+
+
+
+
+just_document.switch_full_screen = async function()
+    {
+        var element = document.documentElement;
+        const request_full_screen = (((element.requestFullscreen || element.webkitRequestFullScreen) || element.mozRequestFullScreen) || element.msRequestFullscreen);
+        try
+        {
+            await request_full_screen.call(element);
+        }
+        catch(e)
+        {
+            console.log(e);
+        }
+        
+        console.log("entering full screen");
+    };
+
+
+access_property_of_object
+    just_document.tabulate_handler
+
+access_object
+    ->:set-it-to-something
+    ->:make a function call of it
+    ->:compare-it-to-something
+    ->:wrap as condition check
+    ->:access property of the object
+
+define-variable
+    var <name> = <expression>
+
+set_value_of_object
+    <variable-reference> = <expression>
+
+<script>
+    just_document.tabulate_handler = function(selection)
+    {
+        event.preventDefault();
+        var start = selection.anchorNode.parentNode;
+        var finish = selection.focusNode.parentNode;
+        
+        if ( finish.offsetTop < start.offsetTop)
+        {
+            var swap = start;
+            start = finish;
+            finish = swap;
+        }
+        if (event.shiftKey)
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.remove_four_leading_spaces(start);
+            }
+            just_document.remove_four_leading_spaces(start);
+        }
+        else
+        {
+            for(var k = 0; k < 100 && start != finish ; k++, start = start.nextSibling)
+            {
+                just_document.insert_four_leading_spaces(start);
+            }
+            just_document.insert_four_leading_spaces(start);
+        }  
+    };
+</script>

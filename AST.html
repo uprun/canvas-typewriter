@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" id="html">
+<html lang="en" id="html" class="dark">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -50,6 +50,33 @@
     .AST-parameter-value
     {
         margin-left: 1rem;
+    }
+</style>
+<style>
+    .AST-socket {
+        min-width: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        border-radius: 2rem;
+        border-style: double;
+        width: fit-content;
+        height: fit-content;
+        display: inline-block;
+    }
+</style>
+<style>
+    .AST-js-brick {
+        margin-bottom: 0.5rem;
+        margin-top: 0.5rem;
+        width: max-content;
+        height: fit-content;
+    }
+</style>
+
+<style>
+    .AST-js-block-of-bricks {
+        list-style-type: none;
+
     }
 </style>
 <script>
@@ -140,122 +167,131 @@
     };
 </script>
 
+<style>
+    .AST-function-in-module {
+        margin-left: 1rem;
+        margin-right: 1rem;
+        overflow: scroll;
+        width: fit-content;
+        height: fit-content;
+    }
 
+</style>
+
+<style>
+    .dark body {
+        background-color: black;
+        color: rgb(245, 6, 229);
+    }
+    .dark .AST-function-in-module {
+        border-color: rgb(58, 133, 214);
+    }
+    .dark .AST-socket {
+        border-color: aqua;
+    }
+    .dark .AST-button {
+        border-color: orchid;
+        color: lightblue;
+    }
+</style>
+<style>
+    .daylight body 
+    {
+        background-color: #FFFFFF;
+        color: rgb(0, 0, 0);
+    }
+    .daylight .AST-function-in-module {
+        border-color: rgb(0, 0, 0);
+    }
+    .daylight .AST-socket {
+        border-color: rgb(217, 112, 0);
+    }
+    .daylight .AST-button {
+        border-color: rgb(240, 149, 100);
+        color: rgb(36, 69, 233);
+    }
+</style>
 
 <body 
     id="body"
-    style="background-color: black;
+    style="
         margin: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;" 
-    class=""
+        overflow: scroll;" 
     
     onload="just_notes.on_load()"
     >
 
     <div 
-        class="prevent-select"
+        class="prevent-select AST-button"
         style="position: absolute;
         left: 1rem;
         top: 1rem;
-        border-color: orchid;
+        
         border-style: solid;
         border-width: 0.2rem;
         border-radius: 0.3rem;
-        color: lightblue;
         padding: 0.4rem;"
         onclick="just_document.switch_full_screen()">F</div>
     
     <div 
-        class="prevent-select"
+        class="prevent-select AST-button"
         style="position: absolute;
         left: 3rem;
         top: 1rem;
-        border-color: orchid;
         border-style: solid;
         border-width: 0.2rem;
         border-radius: 0.3rem;
-        color: lightblue;
         padding: 0.4rem;"
         onclick="AST.create_function()">create function</div>
     <div
+        class="AST-function-in-module"
         style="
         margin-top: 4rem;
-        border-color: rgb(58, 133, 214);
         border-style: solid;
         border-width: 0.2rem;
         border-radius: 0.3rem;
-        color: rgb(245, 6, 229);
         padding: 0.4rem;">
             <div>module: just_notes</div>
             <div>name: on_load</div>
             <div>definition:</div>
-            <div style="margin-left: 1rem;">
-                <div >
-                    define-local-variable body
-                    <div>|> pipe it as "variable-name" to
-                        <div style="margin-left: 1rem;"> set
-                            <div style="margin-left: 1rem;">
-                                variable-name: <i>body</i>
-                            </div>
-                            <div style="margin-left: 1rem;">
-                                value-expression: 
-                                <div style="margin-left: 1rem;">
-                                    get-global-variable "document"
-                                    <div>|> pipe it as "variable-reference" to:</div>
-                                    <div style="margin-left: 1rem;">(getElementById 
-                                        <div style="margin-left: 1rem;">
-                                            <div>variable-reference: <i>document</i></div>
-                                            <div>id-to-search: (string-constant body)</div>
-                                        </div> )</div>
-
-                                </div>
-                                <i>document.getElementById("body");</i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="AST-function-call" >(<br>core.define-variable 
-                    <div class="AST-parameters">
-                        <div>name: "body"</div>
-                    </div>)
-                </div>
-                <div style="margin-left: 0rem;">|> 
-                    <div class="AST-function-call">(<br>=
-                        <div class="AST-parameters">
-                            <div>
-                                expression: 
-                                <div class="AST-parameter-value">
-                                    <div class="AST-function-call">(<br>core.get-variable
-                                        <div class="AST-parameters">
-                                            <div>name: <div class="AST-parameter-value">"document"</div></div>
-                                        </div>)
-                                    </div>
-                                    <div style="margin-left: 0rem;">
-                                        <div>|> 
-                                            <div class="AST-function-call">(<br>getElementById
-                                                <div class="AST-parameters">
-                                                    <div>name: <div class="AST-parameter-value">"body"</div></div>
-                                                </div>)
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                
-                                
-                            </div>
-                        </div>)
-                    </div>
-                    
-                </div>
+            <i>defintion of variable:</i>
+            <div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket" contenteditable="true">expression</span></div>
+            <i>getting property:</i>
+            <div class="AST-js-brick AST-js--access-property-of-the-object" ><span class="AST-socket" contenteditable="true">reference</span>.<span class="AST-socket" contenteditable="true">name of property</span></div>
+            <i>string:</i>
+            <div class="AST-js-brick AST-js--get-reference-to-object" >"<span class="AST-socket" contenteditable="true">name</span>"</div>
+            <i>condition:</i>
+            <div class="AST-js-brick AST-js--if-else" ><span>if</span>&nbsp;<span>(</span><span class="AST-socket" contenteditable="true">boolean</span><span>)</span>
+                <br>
+                &emsp;<span class="AST-socket" contenteditable="true">expression</span>
+                <br>else<br>
+                &emsp;<span class="AST-socket" contenteditable="true">expression</span>
+            </div>
+            <i>list:</i>
+            <div class="AST-js-brick">
                 {
-                    var body = document.getElementById("body");
-                    body.focus();
-                    
-                };</div>
+                    <ol class="AST-js-block-of-bricks">
+                        <li><div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket" contenteditable="true">expression</span></div></li>
+                        <li>add more building bricks</li>
+                    </ol>
+                }
+            </div>
+            <i>map/object:</i>
+            <div class="AST-js-brick">
+                {
+                    <br>
+                    <span class="AST-socket" contenteditable="true">list of properties</span>
+                    <br>
+                }
+            </div>
+            <i>getting property by index:</i>
+            <div class="AST-js-brick AST-js--get-by-index" ><span class="AST-socket" contenteditable="true">reference</span>[<span class="AST-socket" contenteditable="true">some</span>]</div>
+            <i>binary function call:</i>
+            <div class="AST-js-brick AST-js--function-call-but-name-is-between" >(<span class="AST-socket" contenteditable="true">some</span>&nbsp;<span class="AST-socket" contenteditable="true">function</span>&nbsp;<span class="AST-socket" contenteditable="true">some</span>)</div>
+            
+            <div class="AST-js-brick AST-js--function-call-0" ><span class="AST-socket" contenteditable="true">reference</span>(<span class="AST-socket" contenteditable="true">list</span>)</div>
 
         </div>
 

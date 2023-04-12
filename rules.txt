@@ -1,6 +1,20 @@
 each parameter should be placed on next line, except for constants
 
+if I can view something at glance it is the most readable
+    example:
+    (<S1> <F> <S2>)
+        where: 
+            F - function
+            S1 - some
+            S2 - some
+    conter-example:
+        <div class="AST-js-brick AST-js--function-call-but-name-is-between" >(<span class="AST-socket" contenteditable="true">some</span>&nbsp;<span class="AST-socket" contenteditable="true">function</span>&nbsp;<span class="AST-socket" contenteditable="true">some</span>)</div>
+
+
 Lisperanto neon bricks == LNB == NeonLisB
+
+
+oh my gods: first draft was not clear at all // 2023-04-12
 
 (string-constant "hello")
 (|> // special function call "pipyng call" which means : take result from last execution and pass it as a free parameter to this call

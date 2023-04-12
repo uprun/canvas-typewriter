@@ -81,6 +81,35 @@
     // shuffle words
 </script>
 <script>
+    ask.parsed = [];
+    ask.parse_IS_rule = function(str)
+    {
+        var rule_name = "IS";
+        console.log(`checking for \"${rule_name}\" rule`);
+        var reg = /(.+?)\sIS\s(.+)/i;
+        var options = str.match(reg);
+        if(options.length > 2)
+        {
+            console.log(`matched \"${rule_name}\"`);
+            var object = options[1];
+            var subject = options[2];
+            ask.parsed.push(
+                {
+                    operand : "IS",
+                    first: object,
+                    second: subject
+                });
+            
+        }
+        else
+        {
+            console.log(`failed \"${rule_name}\" check`);
+        }
+
+
+    };
+</script>
+<script>
     just_document.on_input = function()
     {
         //console.log(event);

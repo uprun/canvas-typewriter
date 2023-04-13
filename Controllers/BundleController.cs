@@ -35,7 +35,11 @@ namespace lisperanto.Controllers
             {
                 Directory.CreateDirectory(directory);
             }
-            using(StreamWriter actual_writer = new StreamWriter(output_path))
+            using(StreamWriter actual_writer = new StreamWriter(output_path, new FileStreamOptions() {
+                Access = FileAccess.Write, 
+                Mode = FileMode.Create,
+                Options = FileOptions.WriteThrough
+            }))
             {
                 memory_stream.WriteTo(actual_writer.BaseStream);
                 actual_writer.Flush();
@@ -45,7 +49,7 @@ namespace lisperanto.Controllers
             using(StreamWriter html_stream_writer = new StreamWriter(result))
             {
                 string some = Request.IsHttps ? "https://" : "http://";
-                html_stream_writer.WriteLine($"<a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
+                html_stream_writer.WriteLine($"<!DOCTYPE html><a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
                 html_stream_writer.Flush();
                 result.Seek(0, SeekOrigin.Begin);
                 await result.CopyToAsync(Response.Body);
@@ -81,10 +85,25 @@ namespace lisperanto.Controllers
                     var trimmed = line.Trim();
                     if (trimmed.StartsWith("<script ") && trimmed.Contains("src=\"") && trimmed.IsAbsent("lisperanto-skip-bundle=\"true\""))
                     {
-                        embed_script_content(add_script_tags, output_writer, trimmed);
-                        continue;
+                        if (trimmed.Contains("lisperanto-just-paste-into-html"))
+                        {
+                            embed_script_content(add_script_tags: false, output_writer, trimmed, use_html_comments: true);
+                            continue;
+                        }
+
+                        if (trimmed.Contains("lisperanto-just-paste-into-js"))
+                        {
+                            embed_script_content(add_script_tags: false, output_writer, trimmed, use_html_comments: false);
+                            continue;
+                        }
+
+                        {
+                            embed_script_content(add_script_tags: true, output_writer, trimmed);
+                            continue;
+                        }
 
                     }
+                    
 
                     if (trimmed.StartsWith("<link rel=\"stylesheet\"") && trimmed.Contains("href=\"") && trimmed.IsAbsent("lisperanto-skip-bundle=\"true\""))
                     {
@@ -133,7 +152,7 @@ namespace lisperanto.Controllers
             output_writer.WriteLine("</style>");
         }
 
-        private static void embed_script_content(bool add_script_tags, StreamWriter output_writer, string trimmed)
+        private static void embed_script_content(bool add_script_tags, StreamWriter output_writer, string trimmed, bool use_html_comments = false)
         {
             var splitted = trimmed.Split(new[] { " ", "</script>", ">", "<script", "/>" }, StringSplitOptions.RemoveEmptyEntries);
             string src_from_script = splitted.First(a => a.StartsWith("src="));
@@ -151,7 +170,15 @@ namespace lisperanto.Controllers
 
             var path_to_src_file = Path.Combine(Directory.GetCurrentDirectory(), actual_path);
             Console.WriteLine($"Processing \"{path_to_src_file}\"");
-            output_writer.WriteLine($"// Begin of \"{actual_path}\"");
+            if(use_html_comments)
+            {
+                output_writer.WriteLine($"<!-- Begin of \"{actual_path}\" -->");
+            }
+            else
+            {
+                output_writer.WriteLine($"// Begin of \"{actual_path}\"");
+            }
+            
             using (var extra_readed = new StreamReader(path_to_src_file))
             {
                 var all_content = extra_readed.ReadToEnd();
@@ -159,7 +186,15 @@ namespace lisperanto.Controllers
 
             }
             output_writer.WriteLine("");
-            output_writer.WriteLine($"// End of \"{actual_path}\"");
+            if(use_html_comments)
+            {
+                output_writer.WriteLine($"<!-- End of \"{actual_path}\" -->");
+            }
+            else
+            {
+                output_writer.WriteLine($"// End of \"{actual_path}\"");
+            }
+            
             if (add_script_tags)
             {
                 output_writer.WriteLine("</script>");

@@ -1,0 +1,14 @@
+.dark body {
+    background-color: black;
+    color: rgb(245, 6, 229);
+}
+.dark .AST-function-in-module {
+    border-color: rgb(58, 133, 214);
+}
+.dark .AST-socket {
+    border-color: aqua;
+}
+.dark .AST-button {
+    border-color: orchid;
+    color: lightblue;
+}

@@ -1,0 +1,15 @@
+.daylight body 
+{
+    background-color: #FFFFFF;
+    color: rgb(0, 0, 0);
+}
+.daylight .AST-function-in-module {
+    border-color: rgb(0, 0, 0);
+}
+.daylight .AST-socket {
+    border-color: rgb(217, 112, 0);
+}
+.daylight .AST-button {
+    border-color: rgb(240, 149, 100);
+    color: rgb(36, 69, 233);
+}

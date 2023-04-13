@@ -1,0 +1,10 @@
+.AST-socket {
+    min-width: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 2rem;
+    border-style: double;
+    width: fit-content;
+    height: fit-content;
+    display: inline-block;
+}

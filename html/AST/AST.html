@@ -7,205 +7,35 @@
 </head>
 <link rel="stylesheet" href="/css/common/prevent-select.css" />
 <link rel="stylesheet" href="/css/common/no-outline--contenteditable.css" />
-<style>
-    html, 
-    body {
-        height: 100%;
-        width: 100%;
-        font-family: 'Input Mono', monospace;
-    }
-</style>
-<style>
-    .template {
-        display: none;
-    }
-</style>
+<link rel="stylesheet" href="/css/common/body-full-screen.css" />
+<link rel="stylesheet" href="/css/common/monospace-font.css" />
+<link rel="stylesheet" href="/css/common/template-invisible.css" />
 
-<style>
-    .AST-parameters {
-        margin-left: 0rem;
-    }
-</style>
-<style>
-    .AST-function-call {
-        margin-left: 0rem;
-    }
-</style>
-<style>
-    .AST-parameter-value
-    {
-        margin-left: 1rem;
-    }
-</style>
-<style>
-    .AST-socket {
-        min-width: 2rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        border-radius: 2rem;
-        border-style: double;
-        width: fit-content;
-        height: fit-content;
-        display: inline-block;
-    }
-</style>
-<style>
-    .AST-js-brick {
-        margin-bottom: 0.5rem;
-        margin-top: 0.5rem;
-        width: max-content;
-        height: fit-content;
-    }
-</style>
+<link rel="stylesheet" href="/css/AST/AST-socket.css" />
+<link rel="stylesheet" href="/css/AST/AST-js-brick.css" />
+<link rel="stylesheet" href="/css/AST/AST-js-block-of-bricks.css" />
+<link rel="stylesheet" href="/css/AST/AST-function-in-module.css" />
+<link rel="stylesheet" href="/css/AST/AST-divider.css" />
 
-<style>
-    .AST-js-block-of-bricks {
-        list-style-type: none;
-
-    }
-</style>
-<script>
-    just_notes = {};
-</script>
-<script>
-    just_document = {};
-</script>
-<script>
-    just_notes.on_key_down = function()
-    {
-        var selection = document.getSelection();
-        just_notes.debug_logging && console.log({event: event, selection: selection});
-        if(event.key == "Tab")
-        {
-            just_document.tabulate_handler(selection);
-            return;
-        }
-    };
-</script>
-<script>
-    just_notes.on_load = function()
-    {
-        var body = document.getElementById("body");
-        body.focus();
-        
-    };
-</script>
 
 <script src="/js/common/enter_full_screen.js" />
 
-<script>
-    just_document.on_key_up = function()
-    {
-        //console.log(event);
+<link rel="stylesheet" href="/css/AST/dark-theme.css" />
+<link rel="stylesheet" href="/css/AST/daylight-theme.css" />
 
-    };
-</script>
-<script>
-    just_document.on_paste = function()
-    {
-        console.log(event);
-    }
-</script>
-<script>
-    AST = {};
-</script>
+<script src="/js/libs/knockout-3.5.1.debug.js" lisperanto-skip-bundle="true" > </script>
+<script src="/js/libs/knockout-extension-contentEditable.js" lisperanto-skip-bundle="true" > </script>
 
-<script>
-    AST.functions = [];
-    AST.create_function = function()
-    {
-        var func = {
-            module: "sandbox",
-            name: "specify"
-        };
-
-        AST.functions.push(func);
-
-        alert("function created");
-    };
-</script>
-
-<style>
-    .AST-function-in-module {
-        margin-left: 1rem;
-        margin-right: 1rem;
-        overflow: scroll;
-        width: fit-content;
-        height: fit-content;
-    }
-
-</style>
-
-<style>
-    .dark body {
-        background-color: black;
-        color: rgb(245, 6, 229);
-    }
-    .dark .AST-function-in-module {
-        border-color: rgb(58, 133, 214);
-    }
-    .dark .AST-socket {
-        border-color: aqua;
-    }
-    .dark .AST-button {
-        border-color: orchid;
-        color: lightblue;
-    }
-</style>
-<style>
-    .daylight body 
-    {
-        background-color: #FFFFFF;
-        color: rgb(0, 0, 0);
-    }
-    .daylight .AST-function-in-module {
-        border-color: rgb(0, 0, 0);
-    }
-    .daylight .AST-socket {
-        border-color: rgb(217, 112, 0);
-    }
-    .daylight .AST-button {
-        border-color: rgb(240, 149, 100);
-        color: rgb(36, 69, 233);
-    }
-</style>
-<style>
-    .AST-divider {
-        width: 100%;
-        height: 0.1rem;
-        border-style: dotted;
-        border-top-width: 0px;
-        border-left-width: 0px;
-        border-right-width: 0px;
-        border-bottom-width: 0.6rem;
-    }
-</style>
+<script src="/js/AST/body_on_load.js" />
 
 <body 
     id="body"
-    style="
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        overflow: scroll;" 
-    
-    onload="just_notes.on_load()"
+    style="overflow: scroll;" 
+    onload="AST.body_on_load"
     >
 
     <script src="/html/AST/enter-full-screen-button.html" lisperanto-just-paste-into-html />
 
-    
-    
-    <div 
-        class="prevent-select AST-button"
-        style="position: absolute;
-        left: 3rem;
-        top: 1rem;
-        border-style: solid;
-        border-width: 0.2rem;
-        border-radius: 0.3rem;
-        padding: 0.4rem;"
-        onclick="AST.create_function()">create function</div>
     <div
         class="AST-function-in-module"
         style="
@@ -217,6 +47,11 @@
             <div>module: just_notes</div>
             <div>name: on_load</div>
             <div>definition:</div>
+            <div class="AST-divider"></div>
+            <div class="AST-divider"></div>
+
+            <div class="AST-divider"></div>
+            <div class="AST-divider"></div>
             <div class="AST-divider"></div>
             <i>defintion of variable:</i>
             <div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket no-outline" contenteditable="true">expression</span></div>

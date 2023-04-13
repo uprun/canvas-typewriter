@@ -5,23 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AST</title>
 </head>
-<style>
-    .prevent-select {
-        -webkit-user-select: none; /* Safari */
-        -ms-user-select: none; /* IE 10 and IE 11 */
-        user-select: none; /* Standard syntax */
-    }
-</style>
-<style>
-    .cursor-drag {
-        cursor: grab;
-    }
-</style>
-<style>
-    [contenteditable] {
-        outline: 0px solid transparent;
-    }
-</style>
+<link rel="stylesheet" href="/css/common/prevent-select.css" />
+<link rel="stylesheet" href="/css/common/no-outline--contenteditable.css" />
 <style>
     html, 
     body {
@@ -81,9 +66,6 @@
 </style>
 <script>
     just_notes = {};
-    just_notes.debug_logging = false;
-    just_notes.background_color = "black";
-    just_notes.cursor_color = "rosybrown";
 </script>
 <script>
     just_document = {};
@@ -109,24 +91,8 @@
     };
 </script>
 
-<script>
+<script src="/js/common/enter_full_screen.js" />
 
-    just_document.switch_full_screen = async function()
-    {
-        var element = document.documentElement;
-        const request_full_screen = element.requestFullscreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullscreen;
-        try
-        {
-            await request_full_screen.call(element);
-        }
-        catch(e)
-        {
-            console.log(e);
-        }
-        
-        console.log("entering full screen");
-    };
-</script>
 <script>
     just_document.on_key_up = function()
     {
@@ -139,14 +105,6 @@
     {
         console.log(event);
     }
-</script>
-<script>
-    just_document.on_input = function()
-    {
-        //event.preventDefault();
-        var selection = document.getSelection();
-        console.log({event: event, selection: selection});
-    };
 </script>
 <script>
     AST = {};
@@ -244,7 +202,7 @@
         border-width: 0.2rem;
         border-radius: 0.3rem;
         padding: 0.4rem;"
-        onclick="just_document.switch_full_screen()">F</div>
+        onclick="common.enter_full_screen()">F</div>
     
     <div 
         class="prevent-select AST-button"
@@ -269,27 +227,27 @@
             <div>definition:</div>
             <div class="AST-divider"></div>
             <i>defintion of variable:</i>
-            <div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket" contenteditable="true">expression</span></div>
+            <div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket no-outline" contenteditable="true">expression</span></div>
             <div class="AST-divider"></div>
             <i>getting property:</i>
-            <div class="AST-js-brick AST-js--access-property-of-the-object" ><span class="AST-socket" contenteditable="true">reference</span>.<span class="AST-socket" contenteditable="true">name of property</span></div>
+            <div class="AST-js-brick AST-js--access-property-of-the-object" ><span class="AST-socket no-outline" contenteditable="true">reference</span>.<span class="AST-socket no-outline" contenteditable="true">name of property</span></div>
             <div class="AST-divider"></div>
             <i>string:</i>
-            <div class="AST-js-brick AST-js--get-reference-to-object" >"<span class="AST-socket" contenteditable="true">name</span>"</div>
+            <div class="AST-js-brick AST-js--get-reference-to-object" >"<span class="AST-socket no-outline" contenteditable="true">name</span>"</div>
             <div class="AST-divider"></div>
             <i>condition:</i>
-            <div class="AST-js-brick AST-js--if-else" ><span>if</span>&nbsp;<span>(</span><span class="AST-socket" contenteditable="true">boolean</span><span>)</span>
+            <div class="AST-js-brick AST-js--if-else" ><span>if</span>&nbsp;<span>(</span><span class="AST-socket no-outline" contenteditable="true">boolean</span><span>)</span>
                 <br>
-                &emsp;<span class="AST-socket" contenteditable="true">expression</span>
+                &emsp;<span class="AST-socket no-outline" contenteditable="true">expression</span>
                 <br>else<br>
-                &emsp;<span class="AST-socket" contenteditable="true">expression</span>
+                &emsp;<span class="AST-socket no-outline" contenteditable="true">expression</span>
             </div>
             <div class="AST-divider"></div>
             <i>block:</i>
             <div class="AST-js-brick">
                 {
                     <ol class="AST-js-block-of-bricks">
-                        <li><div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket" contenteditable="true">expression</span></div></li>
+                        <li><div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket no-outline" contenteditable="true">expression</span></div></li>
                         <li>add more building bricks</li>
                     </ol>
                 }
@@ -299,19 +257,19 @@
             <div class="AST-js-brick">
                 {
                     <br>
-                    <span class="AST-socket" contenteditable="true">list of properties</span>
+                    <span class="AST-socket no-outline" contenteditable="true">list of properties</span>
                     <br>
                 }
             </div>
             <div class="AST-divider"></div>
             <i>getting property by index:</i>
-            <div class="AST-js-brick AST-js--get-by-index" ><span class="AST-socket" contenteditable="true">reference</span>[<span class="AST-socket" contenteditable="true">some</span>]</div>
+            <div class="AST-js-brick AST-js--get-by-index" ><span class="AST-socket no-outline" contenteditable="true">reference</span>[<span class="AST-socket no-outline" contenteditable="true">some</span>]</div>
             <div class="AST-divider"></div>
             <i>binary function call:</i>
-            <div class="AST-js-brick AST-js--function-call-but-name-is-between" >(<span class="AST-socket" contenteditable="true">some</span>&nbsp;<span class="AST-socket" contenteditable="true">function</span>&nbsp;<span class="AST-socket" contenteditable="true">some</span>)</div>
+            <div class="AST-js-brick AST-js--function-call-but-name-is-between" >(<span class="AST-socket no-outline" contenteditable="true">some</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">function</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">some</span>)</div>
             <div class="AST-divider"></div>
             <i>function call:</i>
-            <div class="AST-js-brick AST-js--function-call-0" ><span class="AST-socket" contenteditable="true">reference</span>(<span class="AST-socket" contenteditable="true">list</span>)</div>
+            <div class="AST-js-brick AST-js--function-call-0" ><span class="AST-socket no-outline" contenteditable="true">reference</span>(<span class="AST-socket no-outline" contenteditable="true">list</span>)</div>
 
         </div>
 

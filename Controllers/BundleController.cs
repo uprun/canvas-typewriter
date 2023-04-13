@@ -28,7 +28,8 @@ namespace lisperanto.Controllers
             var memory_stream = await helper_generate_bundle(input_path, add_script_tags: true);
             var hash = await generate_hash(memory_stream);
             var output_name = $"{without_extension}--{hash}{Path.GetExtension(input_path)}";
-            string output_path = Path.Combine(Directory.GetCurrentDirectory(), "bundles", output_name);
+            string bundled_path = Path.Combine("bundles", Path.GetDirectoryName(path), output_name);
+            string output_path = Path.Combine(Directory.GetCurrentDirectory(), bundled_path);
             var directory = Path.GetDirectoryName(output_path);
             if (Directory.Exists(directory) == false)
             {
@@ -43,9 +44,8 @@ namespace lisperanto.Controllers
             var result = new MemoryStream();
             using(StreamWriter html_stream_writer = new StreamWriter(result))
             {
-                string path2 = Path.Combine("bundles", output_name);
                 string some = Request.IsHttps ? "https://" : "http://";
-                html_stream_writer.WriteLine($"<a href=\"{some}{Request.Host}/{path2}\" target=\"blank\" >{hash}</a>");
+                html_stream_writer.WriteLine($"<a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
                 html_stream_writer.Flush();
                 result.Seek(0, SeekOrigin.Begin);
                 await result.CopyToAsync(Response.Body);

@@ -99,7 +99,7 @@ namespace lisperanto.Controllers
                     
 
                 }
-                
+                output_writer.Flush();
                 in_memory_stream.WriteTo(just_copy);
                 just_copy.Seek(0, SeekOrigin.Begin);
             }
@@ -114,7 +114,12 @@ namespace lisperanto.Controllers
 
             output_writer.WriteLine("<style>");
 
-            var path_to_src_file = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", actual_path);
+            if(actual_path.StartsWith("/"))
+            {
+                actual_path = actual_path.Substring(1);
+            }
+
+            var path_to_src_file = Path.Combine(Directory.GetCurrentDirectory(), actual_path);
             Console.WriteLine($"Processing \"{path_to_src_file}\"");
             output_writer.WriteLine($"/* Begin of \"{actual_path}\" */");
             using (var extra_readed = new StreamReader(path_to_src_file))
@@ -130,16 +135,21 @@ namespace lisperanto.Controllers
 
         private static void embed_script_content(bool add_script_tags, StreamWriter output_writer, string trimmed)
         {
-            var splitted = trimmed.Split(new[] { " ", "</script>", ">", "<script" }, StringSplitOptions.RemoveEmptyEntries);
+            var splitted = trimmed.Split(new[] { " ", "</script>", ">", "<script", "/>" }, StringSplitOptions.RemoveEmptyEntries);
             string src_from_script = splitted.First(a => a.StartsWith("src="));
             var actual_path = src_from_script.Substring("src=\"".Length, src_from_script.Length - "src=\"\"".Length);
+
+            if(actual_path.StartsWith("/"))
+            {
+                actual_path = actual_path.Substring(1);
+            }
 
             if (add_script_tags)
             {
                 output_writer.WriteLine("<script>");
             }
 
-            var path_to_src_file = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", actual_path);
+            var path_to_src_file = Path.Combine(Directory.GetCurrentDirectory(), actual_path);
             Console.WriteLine($"Processing \"{path_to_src_file}\"");
             output_writer.WriteLine($"// Begin of \"{actual_path}\"");
             using (var extra_readed = new StreamReader(path_to_src_file))

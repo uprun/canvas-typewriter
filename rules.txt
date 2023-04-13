@@ -1,6 +1,8 @@
 each parameter should be placed on next line, except for constants
 
 if I can view something at glance it is the most readable
+    in other words: overview-ability is important
+    in other words: overview is important
     example:
     (<S1> <F> <S2>)
         where: 

@@ -49,7 +49,7 @@ namespace lisperanto.Controllers
             using(StreamWriter html_stream_writer = new StreamWriter(result))
             {
                 string some = Request.IsHttps ? "https://" : "http://";
-                html_stream_writer.WriteLine($"<!DOCTYPE html><a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
+                html_stream_writer.WriteLine($"<!DOCTYPE html><html style='background: black;'></html><a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
                 html_stream_writer.Flush();
                 result.Seek(0, SeekOrigin.Begin);
                 await result.CopyToAsync(Response.Body);

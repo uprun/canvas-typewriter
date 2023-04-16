@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" id="html" class="dark">
-<head>
+<html lang="en" id="html" class="dark" >
+<head onload="console.log('html')" >
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AST</title>
@@ -25,13 +25,17 @@
 
 <script src="/js/libs/knockout-3.5.1.debug.js" lisperanto-skip-bundle="true" > </script>
 <script src="/js/libs/knockout-extension-contentEditable.js" lisperanto-skip-bundle="true" > </script>
+<script src="/js/libs/jquery.js" lisperanto-skip-bundle="true" > </script>
+
+<script src="/js/AST/AST.js" />
+<script src="/js/AST/ko__list_of_expressions.js" />
 
 <script src="/js/AST/body_on_load.js" />
 
 <body 
     id="body"
     style="overflow: scroll;" 
-    onload="AST.body_on_load"
+    onload="AST.body_on_load()"
     >
 
     <script src="/html/AST/enter-full-screen-button.html" lisperanto-just-paste-into-html />
@@ -49,6 +53,9 @@
             <div>definition:</div>
             <div class="AST-divider"></div>
             <div class="AST-divider"></div>
+            <!-- ko foreach: $root.ko__list_of_expressions -->
+            1
+            <!--/ko -->
 
             <div class="AST-divider"></div>
             <div class="AST-divider"></div>

@@ -102,20 +102,35 @@
     };
 </script>
 <script>
-    just_notes.shift_canvas_by_small_amount_on_horizontal_axis = function(goal, accum, speed)
+    just_notes.shift_canvas_by_small_amount_on_horizontal_axis = function(goal, speed)
     {
-        just_notes.shift_canvas_by_delta(speed, 0);
-        var stop_path = speed * (speed - 1) / 2
-        var delta = goal - accum - stop_path ;
-        console.log({delta: delta, speed: speed, stop_path: stop_path});
-        if ( delta > 0.1)
+        var stop_path = speed * (speed - 1) / 2;
+        if(goal < 0)
         {
-            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, accum + speed, speed + 1), 100)
+            just_notes.shift_canvas_by_delta( -speed, 0);
+            goal += speed;
+        }
+        if (goal > 0)
+        {
+            just_notes.shift_canvas_by_delta( speed, 0);
+            goal -= speed;
         }
 
-        if ( delta < -0.1)
+        if(Math.abs(goal) < 0.5)
         {
-            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, accum + speed, speed - 1), 100)
+            return;
+        }
+        
+        const timeout = 10;
+        
+        console.log({goal: goal, speed: speed, stop_path: stop_path});
+        if ( Math.abs(goal) > stop_path)
+        {
+            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, speed + 1), timeout)
+        }
+        else
+        {
+            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, speed - 1), timeout)
         }
 
         

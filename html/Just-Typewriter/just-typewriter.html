@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" id="html">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>just-typewriter</title>
+</head>
+<style>
+    html, 
+    body {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+<script>
+    just_notes = {};
+    just_notes.debug_logging = false;
+    just_notes.background_color = "black";
+    just_notes.cursor_color = "rosybrown";
+</script>
+<script>
+    just_notes.recalculate_position_of_preview = function()
+    {
+        const actual_preview = document.getElementById("preview");
+        const children = Array.from(actual_preview.children);
+        var preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+        actual_preview.style.left = (document.body.offsetWidth / 2 - preview_ukrainian.offsetWidth) + "px";
+    };
+</script>
+<script>
+    just_notes.shift_canvas_by_delta = function(deltaX, deltaY, callback)
+    {
+        just_notes.debug_logging && console.log({deltaX: deltaX, deltaY: deltaY});
+        var a_lot_of_nodes = document.getElementsByClassName("just-note");
+        for(var individual of a_lot_of_nodes)
+        {
+            individual.style.top = (individual.offsetTop - deltaY) + "px";
+            individual.style.left = (individual.offsetLeft - deltaX) + "px";
+
+        }
+        if(typeof(callback) == "function")
+        {
+            callback();
+        }
+    };
+</script>
+<script>
+    
+    just_notes.on_key_down = function()
+    {
+        const actual_preview = document.getElementById("preview");
+        const children = Array.from(actual_preview.children);
+        var preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+
+        const height_of_container = actual_preview.offsetHeight;
+        const width_of_container = actual_preview.offsetWidth;
+        const width_of_preview = preview_ukrainian.clientWidth;
+        
+        just_notes.debug_logging && console.log(event);
+        if(event.key == "Enter")
+        {
+            // create a note
+            just_notes.debug_logging && console.log("create note");
+            const template_for_just_notes = document.getElementById("template-for-just-note");
+            
+            const copy = template_for_just_notes.cloneNode(true);// deep copy
+            const children = Array.from(copy.children);
+            var copy_preview_ukrainian = children.filter(el => el.id == "preview-ukrainian")[0];
+            copy.id = "";
+            document.body.append(copy);
+            copy.style.left = (actual_preview.offsetLeft) + "px";
+            copy.style.top = (actual_preview.offsetTop) + "px";
+            copy.style.bottom = "";
+            copy.style.visibility = "visible";
+            copy_preview_ukrainian.textContent = preview_ukrainian.textContent;
+            preview_ukrainian.textContent = "";
+            just_notes.recalculate_position_of_preview();
+            just_notes.shift_canvas_by_delta(
+                0
+                , height_of_container,
+                () => setTimeout( () => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(-(width_of_preview), 0, 0), 100) 
+                );
+
+        }
+        if (event.key == "Backspace")
+        {
+            preview_ukrainian.textContent = preview_ukrainian.textContent.substring(0,preview_ukrainian.textContent.length - 1);
+            just_notes.recalculate_position_of_preview();
+            just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
+        }
+
+        if (event.key.length > 1 )
+        {
+            return;
+        }
+        
+        preview_ukrainian.textContent = preview_ukrainian.textContent + event.key;
+        just_notes.recalculate_position_of_preview();
+        just_notes.shift_canvas_by_delta(preview_ukrainian.clientWidth - width_of_preview, 0);
+        
+        event.preventDefault();
+    };
+</script>
+<script>
+    just_notes.shift_canvas_by_small_amount_on_horizontal_axis = function(goal, accum, speed)
+    {
+        just_notes.shift_canvas_by_delta(speed, 0);
+        var stop_path = speed * (speed - 1) / 2
+        var delta = goal - accum - stop_path ;
+        console.log({delta: delta, speed: speed, stop_path: stop_path});
+        if ( delta > 0.1)
+        {
+            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, accum + speed, speed + 1), 100)
+        }
+
+        if ( delta < -0.1)
+        {
+            setTimeout(() => just_notes.shift_canvas_by_small_amount_on_horizontal_axis(goal, accum + speed, speed - 1), 100)
+        }
+
+        
+
+    }
+</script>
+<script>
+    just_notes.on_load = function()
+    {
+        var body = document.getElementById("body");
+        body.focus();
+        just_notes.rem_related_height = document.getElementById("preview").offsetHeight;
+        document.getElementById("preview").style["border-right-color"] = just_notes.background_color;
+    };
+</script>
+
+
+<script>
+    just_notes.preview_on_transition_end = function()
+    {
+        var target = event.originalTarget || event.target;
+        if(target.style["border-right-color"] == just_notes.background_color)
+        {
+            target.style["border-right-color"] = just_notes.cursor_color;
+            return;
+        }
+        if(target.style["border-right-color"] == just_notes.cursor_color)
+        {
+            target.style["border-right-color"] = just_notes.background_color;
+            return;
+        }
+        target.style["border-right-color"] = just_notes.background_color;
+    };
+</script>
+
+
+<body 
+    id="body"
+    style="background-color: black;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;" 
+    class="cursor-drag"
+    onkeydown="just_notes.on_key_down()" 
+    onload="just_notes.on_load()"
+    >
+    <div
+        id="template-for-just-note" 
+        class="just-note"
+        style="position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            color: rosybrown;
+            visibility: hidden;
+            width: max-content;">
+        <div 
+            id="preview-ukrainian"
+            class=""
+            style="white-space: pre-wrap;">some   why</div>
+
+        
+    </div>
+
+    <div
+        id="preview"
+        style="position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            color: rosybrown;
+            border-right-width: 0.2rem;
+            border-right-style: solid;
+            border-right-color: rosybrown;
+            transition: border-right-color 0.4s ease-in-out;
+            transition-delay: 0.3s;
+            min-width: 0.2rem;
+            min-height: 1.2rem;"
+        ontransitionend="just_notes.preview_on_transition_end()">
+        <div 
+            id="preview-ukrainian"
+            style="white-space: pre-wrap;
+                width: fit-content;"></div>
+
+        
+    </div>
+
+</body>

@@ -1,0 +1,31 @@
+<!-- ko with: $data.ko__body_of_function_example -->
+<ol class="AST-js-block-of-bricks">
+    <!-- ko foreach: $data.list_of_expressions -->
+        <li><span 
+            class="AST-socket no-outline" 
+            contenteditable="true" 
+            data-bind="
+                text: $data.text,
+                event:
+                {
+                    keydown: $root.ko__function_lisperanto_atom_on_key_down
+                }
+                "
+            ></span>
+        </li>
+        
+    <!--/ko -->
+        <li><span 
+        class="AST-socket no-outline" 
+        contenteditable="true" 
+        data-bind="
+            text: $data.new_expression,
+            event:
+            {
+                keydown: $root.ko__function_body_on_key_down
+            }
+            "></span></li>
+    </ol>
+    <br/>
+    
+<!-- /ko -->

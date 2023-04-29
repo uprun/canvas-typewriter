@@ -1,1 +1,1 @@
-AST.ko__list_of_expressions = ko.observableArray([1]);
+AST.ko__list_of_expressions = ko.observableArray([{type: "atom", text: "hello_1"}]);

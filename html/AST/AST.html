@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" id="html" class="dark" >
+<html lang="en" id="html" class="daylight" >
 <head onload="console.log('html')" >
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,11 +24,12 @@
 <link rel="stylesheet" href="/css/AST/daylight-theme.css" />
 
 <script src="/js/libs/knockout-3.5.1.debug.js" lisperanto-skip-bundle="true" > </script>
-<script src="/js/libs/knockout-extension-contentEditable.js" lisperanto-skip-bundle="true" > </script>
-<script src="/js/libs/jquery.js" lisperanto-skip-bundle="true" > </script>
 
 <script src="/js/AST/AST.js" />
 <script src="/js/AST/ko__list_of_expressions.js" />
+<script src="/js/AST/ko__body_of_function_example.js" />
+<script src="/js/AST/ko__function_body_on_key_down.js" />
+<script src="/js/AST/ko__function_lisperanto_atom_on_key_down.js" />
 
 <script src="/js/AST/body_on_load.js" />
 
@@ -40,72 +41,34 @@
 
     <script src="/html/AST/enter-full-screen-button.html" lisperanto-just-paste-into-html />
 
-    <div
-        class="AST-function-in-module"
-        style="
-        margin-top: 4rem;
-        border-style: solid;
-        border-width: 0.2rem;
-        border-radius: 0.3rem;
-        padding: 0.4rem;">
-            <div>module: just_notes</div>
-            <div>name: on_load</div>
-            <div>definition:</div>
-            <div class="AST-divider"></div>
-            <div class="AST-divider"></div>
-            <!-- ko foreach: $root.ko__list_of_expressions -->
-            1
-            <!--/ko -->
-
-            <div class="AST-divider"></div>
-            <div class="AST-divider"></div>
-            <div class="AST-divider"></div>
-            <i>defintion of variable:</i>
-            <div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket no-outline" contenteditable="true">expression</span></div>
-            <div class="AST-divider"></div>
-            <i>getting property:</i>
-            <div class="AST-js-brick AST-js--access-property-of-the-object" ><span class="AST-socket no-outline" contenteditable="true">reference</span>.<span class="AST-socket no-outline" contenteditable="true">name of property</span></div>
-            <div class="AST-divider"></div>
-            <i>string:</i>
-            <div class="AST-js-brick AST-js--get-reference-to-object" >"<span class="AST-socket no-outline" contenteditable="true">name</span>"</div>
-            <div class="AST-divider"></div>
-            <i>condition:</i>
-            <div class="AST-js-brick AST-js--if-else" ><span>if</span>&nbsp;<span>(</span><span class="AST-socket no-outline" contenteditable="true">boolean</span><span>)</span>
-                <br>
-                &emsp;<span class="AST-socket no-outline" contenteditable="true">expression</span>
-                <br>else<br>
-                &emsp;<span class="AST-socket no-outline" contenteditable="true">expression</span>
-            </div>
-            <div class="AST-divider"></div>
-            <i>block:</i>
-            <div class="AST-js-brick">
-                {
-                    <ol class="AST-js-block-of-bricks">
-                        <li><div class="AST-js-brick AST-js--variable-definition" ><span>var</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">name</span>&nbsp;=&nbsp;<span class="AST-socket no-outline" contenteditable="true">expression</span></div></li>
-                        <li>add more building bricks</li>
-                    </ol>
-                }
-            </div>
-            <div class="AST-divider"></div>
-            <i>map/object:</i>
-            <div class="AST-js-brick">
-                {
-                    <br>
-                    <span class="AST-socket no-outline" contenteditable="true">list of properties</span>
-                    <br>
-                }
-            </div>
-            <div class="AST-divider"></div>
-            <i>getting property by index:</i>
-            <div class="AST-js-brick AST-js--get-by-index" ><span class="AST-socket no-outline" contenteditable="true">reference</span>[<span class="AST-socket no-outline" contenteditable="true">some</span>]</div>
-            <div class="AST-divider"></div>
-            <i>binary function call:</i>
-            <div class="AST-js-brick AST-js--function-call-but-name-is-between" >(<span class="AST-socket no-outline" contenteditable="true">some</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">function</span>&nbsp;<span class="AST-socket no-outline" contenteditable="true">some</span>)</div>
-            <div class="AST-divider"></div>
-            <i>function call:</i>
-            <div class="AST-js-brick AST-js--function-call-0" ><span class="AST-socket no-outline" contenteditable="true">reference</span>(<span class="AST-socket no-outline" contenteditable="true">list</span>)</div>
-
+    <div style="
+        display: block;
+        float: inline-start;">
+        <div
+            class="AST-function-in-module"
+            style="
+            margin-top: 4rem;
+            border-style: solid;
+            border-width: 0.2rem;
+            border-radius: 0.3rem;
+            padding: 0.4rem;">
+                <div>module: just_notes</div>
+                <div>name: on_load</div>
+                <div>definition:</div>
+                <div class="AST-divider"></div>
+                <script src="/html/AST/ko__block_of_expressions.html" lisperanto-just-paste-into-html />
+                
         </div>
+    </div>
+    
+
+    <div style="
+        display: block;
+        float: inline-start;">
+        <div class="AST-divider"></div>
+
+        <script src="/html/AST/examples_of_code_for_js.html" lisperanto-just-paste-into-html />
+    </div>
 
 </body>
 </html>

@@ -3,4 +3,12 @@ and now I have an idea for background for this typewriter
 it would be words scattered at background
 some of them would be smaller
 some of them will be larger
-some of them would be out of focus
+some of them would be out of focus 
+done - 2023-04-29
+
+next I need to add
+    full-screen button
+    daylight theme
+    night theme
+    export
+    saving to local storage

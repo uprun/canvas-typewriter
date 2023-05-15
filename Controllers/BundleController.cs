@@ -13,11 +13,70 @@ namespace lisperanto.Controllers
 {
     public class BundleController : Controller
     {
+
         private readonly ILogger<HomeController> _logger;
+        private FileSystemWatcher watcher = null;
 
         public BundleController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            subscribe_to_file_changes();
+        }
+
+        private void subscribe_to_file_changes()
+        {
+            if (watcher != null)
+                return;
+
+            this.watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
+
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                                 | NotifyFilters.CreationTime
+                                 | NotifyFilters.DirectoryName
+                                 | NotifyFilters.FileName
+                                 | NotifyFilters.LastAccess
+                                 | NotifyFilters.LastWrite
+                                 | NotifyFilters.Security
+                                 | NotifyFilters.Size;
+
+            watcher.Changed += OnChanged;
+            watcher.Created += OnCreated;
+            watcher.Deleted += OnDeleted;
+            watcher.Renamed += OnRenamed;
+            watcher.Error += OnError;
+
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void OnError(object sender, ErrorEventArgs e)
+        {
+            Console.WriteLine(e);
+        }
+
+        private static void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Changed)
+            {
+                return;
+            }
+            Console.WriteLine($"Changed: {e.FullPath}");
+        }
+
+        private static void OnCreated(object sender, FileSystemEventArgs e)
+        {
+            string value = $"Created: {e.FullPath}";
+            Console.WriteLine(value);
+        }
+
+        private static void OnDeleted(object sender, FileSystemEventArgs e) =>
+            Console.WriteLine($"Deleted: {e.FullPath}");
+
+        private static void OnRenamed(object sender, RenamedEventArgs e)
+        {
+            Console.WriteLine($"Renamed:");
+            Console.WriteLine($"    Old: {e.OldFullPath}");
+            Console.WriteLine($"    New: {e.FullPath}");
         }
 
         public async Task GenerateBundle(string path)
@@ -27,7 +86,8 @@ namespace lisperanto.Controllers
             var without_extension = Path.GetFileNameWithoutExtension(input_path);
             var memory_stream = await helper_generate_bundle(input_path, add_script_tags: true);
             var hash = await generate_hash(memory_stream);
-            var output_name = $"{without_extension}--{hash}{Path.GetExtension(input_path)}";
+            var date_time = DateTime.Now;
+            var output_name = $"{without_extension}--{date_time.ToString("yyyy-MM-dd--HH:mm:sszzz")}--{hash.Substring(0, 10)}{Path.GetExtension(input_path)}";
             string bundled_path = Path.Combine("bundles", Path.GetDirectoryName(path), output_name);
             string output_path = Path.Combine(Directory.GetCurrentDirectory(), bundled_path);
             var directory = Path.GetDirectoryName(output_path);
@@ -49,7 +109,7 @@ namespace lisperanto.Controllers
             using(StreamWriter html_stream_writer = new StreamWriter(result))
             {
                 string some = Request.IsHttps ? "https://" : "http://";
-                html_stream_writer.WriteLine($"<!DOCTYPE html><html style='background: black;'></html><a href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{hash}</a>");
+                html_stream_writer.WriteLine($"<!DOCTYPE html><html style='background: black;'></html><a style='color: orange;' href=\"{some}{Request.Host}/{bundled_path}\" target=\"blank\" >{output_name}</a>");
                 html_stream_writer.Flush();
                 result.Seek(0, SeekOrigin.Begin);
                 await result.CopyToAsync(Response.Body);

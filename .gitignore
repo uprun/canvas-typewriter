@@ -1,5 +1,6 @@
 .DS_Store
-bin/**/*
-obj/**/*
+**/bin/**/*
+**/obj/**/*
 bundles/**/*
 documents/**/*
+.history/**/*

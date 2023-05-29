@@ -1,9 +1,14 @@
 1) functions should be small (40 lines top) and 100 chars per line max, ideally
 2) if it takes more than one day to implement, I took wrong direction [2023-02-02]
-3) don't over-optimize, "The root of all evil is premature optimization" Dijkstra
-4) if there are too many statements then something is wrong with the design or with requirements
+3) "The root of all evil is premature optimization" Dijkstra
+4) if there are too many statements - something is wrong with the design or with requirements
 5) just save the whole document on every commit [Ctrl|Cmnd + Enter]
-6) don't waste time on small issues
-7) this is just text editor on canvas from now 
-// if there is an "and" in the sentence it might indicate that something is wrong
+[deleted] 6) don't waste time on small issues [ kinda true but not relevant]
+[deleted] 7) this is just text editor on canvas from now  [not relevant anymore]
 8) if development takes too much time - reduce scope // explanation to [7) just text editor on canvas]
+9) if there is an "AND" or "OR" in the function name - something is wrong
+10) real-time design is very cool // live syncronization as an example
+11) Manipulations with files should be authorized each time
+12) when you have limited resource or just limitation you can design more diverse and interesting solution
+13) iterative design is much better than from groun-up design
+14) everything must be easy readable [I need to redo these principles]

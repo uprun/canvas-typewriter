@@ -1,0 +1,16 @@
+{
+    "type": "function",
+    "visibility": "hidden",
+    "body":
+        [
+            {
+                "type": "function-call",
+                "function_name": "print",
+                "parameters": 
+                    [
+                        "hello world"
+                    ]
+            }
+        ]
+
+}

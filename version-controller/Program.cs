@@ -2,6 +2,7 @@
 {
 
     var path = Path.Combine(Directory.GetCurrentDirectory(), "..");
+    path = new DirectoryInfo(path).FullName;
     var watcher = new FileSystemWatcher(path);
     Console.WriteLine($"Watching \"{path}\"");
 
@@ -17,7 +18,41 @@
                             | NotifyFilters.Security
                             | NotifyFilters.Size;
 
-    watcher.Changed += OnChanged;
+    var ignore_directories = new [] {
+        "/bin/",
+        "/obj/",
+        "/bundles/",
+        "/.history/"
+    };
+
+    watcher.Changed += (object sender, FileSystemEventArgs e) =>
+        {
+            if (e.ChangeType != WatcherChangeTypes.Changed)
+            {
+                return;
+            }
+            Console.WriteLine($"Changed: {e.FullPath}");
+            var full_path = new FileInfo(e.FullPath).FullName;
+            var partial = full_path.Substring(path.Length);
+            var to_be_excluded_by = ignore_directories.Where((to_ignore) => full_path.Contains(to_ignore)).ToList();
+            if ( to_be_excluded_by.Count != 0)
+            {
+                Console.WriteLine($"changes in { String.Join( "," , to_be_excluded_by)} folder(s)");
+                return;
+            }
+            if (partial.StartsWith(Path.DirectorySeparatorChar))
+            {
+                partial = partial.Substring(1);
+            }
+            var backup_path = Path.Combine(history_path, partial);
+            Console.WriteLine(partial );
+            Console.WriteLine($"will copy to \"{backup_path}\"");
+            Directory.CreateDirectory(backup_path);
+            var date_time = DateTime.Now;
+            var output_name = $"{date_time.ToString("yyyy-MM-dd--HH:mm:sszzz")}{Path.GetExtension(full_path)}";
+            var to_copy_to = Path.Combine(backup_path, output_name);
+            File.Copy(full_path, to_copy_to);
+        };
     watcher.Created += OnCreated;
     watcher.Deleted += OnDeleted;
     watcher.Renamed += OnRenamed;
@@ -34,14 +69,6 @@ void OnError(object sender, ErrorEventArgs e)
     Console.WriteLine(e);
 }
 
-void OnChanged(object sender, FileSystemEventArgs e)
-{
-    if (e.ChangeType != WatcherChangeTypes.Changed)
-    {
-        return;
-    }
-    Console.WriteLine($"Changed: {e.FullPath}");
-}
 
 void OnCreated(object sender, FileSystemEventArgs e)
 {
@@ -59,6 +86,6 @@ void OnRenamed(object sender, RenamedEventArgs e)
     Console.WriteLine($"    New: {e.FullPath}");
 }
 
-subscribe_to_file_changes();
+var watcher =subscribe_to_file_changes();
 
 while(true){} // yeah infinite loop

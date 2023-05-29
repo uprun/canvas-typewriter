@@ -13,13 +13,10 @@ namespace lisperanto.Controllers
 {
     public class BundleController : Controller
     {
-
-        private readonly ILogger<HomeController> _logger;
         private FileSystemWatcher watcher = null;
 
         public BundleController(ILogger<HomeController> logger)
         {
-            _logger = logger;
             subscribe_to_file_changes();
         }
 

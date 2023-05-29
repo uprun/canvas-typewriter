@@ -1,4 +1,6 @@
-﻿FileSystemWatcher subscribe_to_file_changes()
+﻿// TODO: on start check missing files
+// TODO: on start check missing versions from all files
+FileSystemWatcher subscribe_to_file_changes()
 {
 
     var path = Path.Combine(Directory.GetCurrentDirectory(), "..");

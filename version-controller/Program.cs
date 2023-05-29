@@ -22,7 +22,8 @@
         "/bin/",
         "/obj/",
         "/bundles/",
-        "/.history/"
+        "/.history/",
+        "/.git/"
     };
 
     watcher.Changed += (object sender, FileSystemEventArgs e) =>
@@ -31,15 +32,16 @@
             {
                 return;
             }
-            Console.WriteLine($"Changed: {e.FullPath}");
+            
             var full_path = new FileInfo(e.FullPath).FullName;
             var partial = full_path.Substring(path.Length);
             var to_be_excluded_by = ignore_directories.Where((to_ignore) => full_path.Contains(to_ignore)).ToList();
             if ( to_be_excluded_by.Count != 0)
             {
-                Console.WriteLine($"changes in { String.Join( "," , to_be_excluded_by)} folder(s)");
+                Console.WriteLine($"IGNORE changes in { String.Join( "," , to_be_excluded_by)} folder(s): {e.FullPath}");
                 return;
             }
+            Console.WriteLine($"Changed: {e.FullPath}");
             if (partial.StartsWith(Path.DirectorySeparatorChar))
             {
                 partial = partial.Substring(1);

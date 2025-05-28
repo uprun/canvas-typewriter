@@ -196,6 +196,7 @@
 <script>
     just_notes.body_on_wheel = function()
     {
+        event.preventDefault();
         just_notes.debug_logging && console.log(event);
         just_notes.shift_canvas_by_delta(event.deltaX, event.deltaY);
     };
